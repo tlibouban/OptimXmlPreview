@@ -1,193 +1,343 @@
-# Contributing to OptimXmlPreview
+# 🤝 Guide de Contribution - OptimXmlPreview v2.0
 
-Nous sommes ravis que vous souhaitiez contribuer à OptimXmlPreview ! Ce document vous guidera à travers le processus de contribution.
+## Standards de développement et bonnes pratiques
 
-## 🚀 Comment contribuer
+---
 
-### Signaler des bugs
+## 📋 Table des Matières
 
-1. **Vérifiez** d'abord si le bug n'a pas déjà été signalé dans les [Issues](https://github.com/votre-username/OptimXmlPreview/issues)
-2. **Créez une nouvelle issue** avec le template de bug
-3. **Décrivez clairement** :
-   - Votre environnement (OS, version Node.js)
-   - Les étapes pour reproduire le bug
-   - Le comportement attendu vs observé
-   - Des captures d'écran si applicable
+- [Vue d'ensemble](#-vue-densemble)
+- [Standards de développement](#-standards-de-développement)
+- [Workflow de contribution](#-workflow-de-contribution)
+- [Structure du projet](#-structure-du-projet)
+- [Tests et qualité](#-tests-et-qualité)
+- [Documentation](#-documentation)
 
-### Proposer des améliorations
+---
 
-1. **Ouvrez une issue** avec le template de feature request
-2. **Décrivez** clairement le problème que vous voulez résoudre
-3. **Proposez** une solution ou des alternatives
-4. **Attendez** la discussion avant de commencer le développement
+## 🎯 Vue d'ensemble
 
-### Soumettre du code
+Nous accueillons toutes les contributions à **OptimXmlPreview v2.0** ! Ce guide établit les standards de qualité et les processus pour maintenir la cohérence du projet.
 
-1. **Fork** le projet
-2. **Créez** une branche feature : `git checkout -b feature/ma-super-feature`
-3. **Commitez** vos changements : `git commit -m 'feat: ajouter ma super feature'`
-4. **Respectez** les conventions de commit (Conventional Commits)
-5. **Testez** votre code
-6. **Push** vers votre branche : `git push origin feature/ma-super-feature`
-7. **Ouvrez** une Pull Request
+### Principes de contribution
+- **📋 Qualité** : Code propre, testé et documenté
+- **🔄 Cohérence** : Respect des conventions établies
+- **🤝 Collaboration** : Communication respectueuse et constructive
+- **🚀 Innovation** : Propositions d'amélioration bienvenues
 
-## 📋 Guidelines de développement
+---
 
-### Style de code
+## 💻 Standards de développement
 
-- **ESLint** : Le code doit passer les vérifications ESLint
-- **Prettier** : Formatage automatique avec Prettier
-- **JSDoc** : Documentez toutes les fonctions publiques
-- **Tests** : Ajoutez des tests pour les nouvelles fonctionnalités
+### Technologies utilisées
+- **Runtime** : Node.js v18+
+- **Serveur** : Express.js
+- **Frontend** : HTML5, CSS3, JavaScript ES6+
+- **Tests** : Jest
+- **Linting** : ESLint + Prettier
 
-### Convention de commits
+### Standards de code
 
-Nous utilisons [Conventional Commits](https://www.conventionalcommits.org/) :
+#### JavaScript
+```javascript
+// ✅ Bonnes pratiques
+const CONFIG = require('./assets/templates/config.js');
 
-```
-feat: nouvelle fonctionnalité
-fix: correction de bug
-docs: mise à jour documentation
-style: formatage, points-virgules manquants, etc.
-refactor: refactoring du code
-test: ajout ou modification de tests
-chore: maintenance, mise à jour dépendances
-```
+async function convertXmlToHtml(xmlContent, outputPath) {
+  try {
+    // Logique claire et commentée
+    const result = await processXml(xmlContent);
+    Logger.success('Conversion réussie');
+    return result;
+  } catch (error) {
+    Logger.error(`Erreur conversion: ${error.message}`);
+    throw error;
+  }
+}
 
-### Structure du projet
-
-```
-OptimXmlPreview/
-├── Data/                    # Fichiers XML d'entrée (exemples)
-├── Output/                  # Fichiers HTML générés
-├── img/                     # Ressources images
-├── ConvertXmlToHtml.js     # Module principal de conversion
-├── UpdateIndex.js          # Module de mise à jour de l'index
-├── index.html              # Interface de navigation
-├── ConvertAndView.bat      # Script Windows conversion lot
-├── ConvertOneFile.bat      # Script Windows fichier unique
-└── README.md               # Documentation
+// ✅ Exports explicites
+module.exports = {
+  convertXmlToHtml,
+  CONFIG,
+  Logger
+};
 ```
 
-## 🧪 Tests
+#### CSS
+```css
+/* ✅ Variables CSS et structure cohérente */
+:root {
+  --primary-color: #141325;
+  --accent-color: #4CAF50;
+  --text-color: #333;
+}
 
-### Lancer les tests
+.email-container {
+  padding: var(--spacing-md);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+}
+```
 
+#### HTML
+```html
+<!-- ✅ Structure sémantique et accessible -->
+<main class="email-viewer" role="main">
+  <header class="email-header">
+    <h1 class="email-subject">{{ subject }}</h1>
+  </header>
+  <section class="email-content">
+    <!-- Contenu email -->
+  </section>
+</main>
+```
+
+---
+
+## 🔄 Workflow de contribution
+
+### 1. Préparation
 ```bash
-# Tests unitaires
-npm test
-
-# Tests avec couverture
-npm run test:coverage
-
-# Tests en mode watch
-npm run test:watch
-```
-
-### Écrire des tests
-
-- **Tests unitaires** pour les fonctions utilitaires
-- **Tests d'intégration** pour les workflows complets
-- **Couverture minimale** : 80% lignes/branches/fonctions
-
-## 🏗️ Environnement de développement
-
-### Prérequis
-
-- Node.js >= 18.0.0
-- npm >= 8.0.0
-- Git
-
-### Installation
-
-```bash
-# Cloner le projet
-git clone https://github.com/votre-username/OptimXmlPreview.git
+# Fork et clone du projet
+git clone https://github.com/[votre-username]/OptimXmlPreview.git
 cd OptimXmlPreview
 
-# Installer les dépendances
+# Installation dépendances
 npm install
 
-# Lancer en mode développement
-npm run dev
+# Vérification environnement
+npm run test
+npm run lint
 ```
 
-### Scripts utiles
-
+### 2. Développement
 ```bash
-npm run lint          # Vérification ESLint
-npm run lint:fix      # Correction automatique ESLint
-npm run format        # Formatage Prettier
-npm run docs          # Génération documentation
-npm run build         # Build pour production
+# Créer une branche feature
+git checkout -b feature/nouvelle-fonctionnalite
+
+# Développement avec tests
+npm run test:watch
+
+# Validation continue
+npm run lint:fix
 ```
 
-## 📝 Documentation
+### 3. Conventions Git
 
-- **README.md** : Documentation principale
-- **JSDoc** : Documentation des fonctions dans le code
-- **CHANGELOG.md** : Historique des versions
-- **Wiki** : Documentation technique approfondie (GitHub Wiki)
+#### Messages de commit
+```bash
+# Format : type(scope): description
 
-## 🤝 Code de conduite
+# Types autorisés
+feat(server): ajout endpoint API conversion temps réel
+fix(css): correction responsive design email-viewer
+docs(readme): mise à jour guide installation
+style(css): harmonisation variables couleurs
+refactor(core): externalisation configuration
+test(convert): ajout tests conversion XML complexe
+chore(deps): mise à jour dépendances sécurité
+```
 
-### Nos standards
+#### Workflow branches
+- **`main`** : Code production stable
+- **`develop`** : Intégration features (si applicable)
+- **`feature/*`** : Nouvelles fonctionnalités
+- **`hotfix/*`** : Corrections urgentes
+- **`docs/*`** : Améliorations documentation
 
-- **Respect** : Soyez respectueux envers tous les contributeurs
-- **Inclusion** : Nous accueillons les contributions de tous
-- **Collaboration** : Travaillons ensemble pour améliorer le projet
-- **Apprentissage** : Partageons nos connaissances
+### 4. Pull Request
+```markdown
+## 📋 Description
+Résumé de la fonctionnalité/correction
 
-### Comportements inacceptables
+## ✨ Changements
+- [ ] Nouvelle fonctionnalité X
+- [ ] Correction bug Y
+- [ ] Amélioration performance Z
 
-- Propos discriminatoires ou harcelants
-- Attaques personnelles
-- Spam ou publicité non sollicitée
-- Violation de la vie privée
+## 🧪 Tests
+- [ ] Tests unitaires ajoutés/mis à jour
+- [ ] Tests d'intégration validés
+- [ ] Tests manuels effectués
 
-## ❓ Questions
+## 📚 Documentation
+- [ ] README mis à jour si nécessaire
+- [ ] JSDoc ajouté pour nouvelles fonctions
+- [ ] CHANGELOG mis à jour
+```
 
-Si vous avez des questions :
+---
 
-1. **Consultez** la documentation existante
-2. **Recherchez** dans les issues fermées
-3. **Posez** votre question dans une nouvelle issue
-4. **Rejoignez** nos discussions GitHub
+## 🗂️ Structure du projet
 
-## 🎯 Priorités actuelles
+### Organisation des fichiers
+```
+OptimXmlPreview/
+├── 📁 assets/                    # Ressources frontend
+│   ├── css/                      # Styles modulaires
+│   ├── js/                       # Scripts client
+│   └── templates/                # Configuration
+├── 📁 tests/                     # Tests automatisés
+│   ├── unit/                     # Tests unitaires
+│   ├── integration/              # Tests d'intégration
+│   └── fixtures/                 # Données de test
+├── 📁 docs/                      # Documentation
+└── 📁 scripts/                   # Scripts utilitaires
+```
 
-- [ ] Tests automatisés plus complets
-- [ ] Support multi-langues
-- [ ] Interface web moderne
-- [ ] Export PDF intégré
-- [ ] API REST
-- [ ] Documentation utilisateur
+### Conventions de nommage
+- **Fichiers** : `kebab-case.js` (ex: `email-viewer.css`)
+- **Fonctions** : `camelCase` (ex: `convertXmlToHtml`)
+- **Constantes** : `UPPER_SNAKE_CASE` (ex: `CONFIG.SERVER.PORT`)
+- **Classes CSS** : `kebab-case` (ex: `.email-container`)
 
-## 📊 Process de review
+---
 
-### Critères d'acceptation
+## 🧪 Tests et qualité
 
-- ✅ Code fonctionnel et testé
-- ✅ Documentation mise à jour
-- ✅ Respect des conventions
-- ✅ Pas de régression
-- ✅ Performance maintenue
+### Types de tests
+```bash
+# Tests unitaires (obligatoires)
+npm run test:unit
 
-### Timeline
+# Tests d'intégration
+npm run test:integration
 
-- **Review initiale** : 2-3 jours ouvrés
-- **Feedback** : Discussion constructive
-- **Merge** : Après approbation d'un mainteneur
+# Tests E2E (si applicable)
+npm run test:e2e
 
-## 🏆 Reconnaissance
+# Couverture de code
+npm run test:coverage
+```
 
-Tous les contributeurs sont reconnus dans :
+### Exigences qualité
+- **Couverture minimale** : 80% (branches, fonctions, lignes)
+- **Linting** : 0 erreur ESLint
+- **Performance** : Pas de régression significative
+- **Documentation** : JSDoc pour toutes fonctions publiques
 
-- **README.md** : Section Contributors
-- **CHANGELOG.md** : Mentions des contributions
-- **Releases** : Notes de version
+### Exemple test unitaire
+```javascript
+// tests/unit/convert.test.js
+const { convertXmlToHtml, extractEmailMetadata } = require('../../ConvertXmlToHtml.js');
 
-Merci de contribuer à OptimXmlPreview ! 🚀
+describe('ConvertXmlToHtml', () => {
+  test('devrait extraire les métadonnées email', () => {
+    const xmlContent = '<email><subject>Test</subject></email>';
+    const metadata = extractEmailMetadata(xmlContent);
+    
+    expect(metadata.subject).toBe('Test');
+    expect(metadata.date).toBeDefined();
+  });
+  
+  test('devrait gérer les erreurs XML malformé', () => {
+    const invalidXml = '<email><subject>Unclosed tag';
+    
+    expect(() => {
+      extractEmailMetadata(invalidXml);
+    }).toThrow('XML malformé');
+  });
+});
+```
+
+---
+
+## 📚 Documentation
+
+### Standards documentation
+
+#### JSDoc
+```javascript
+/**
+ * Convertit un fichier XML email en HTML formaté
+ * @param {string} xmlContent - Contenu XML source
+ * @param {string} outputPath - Chemin de sortie HTML
+ * @param {Object} options - Options de conversion
+ * @param {boolean} options.includeAttachments - Inclure pièces jointes
+ * @returns {Promise<Object>} Résultat conversion avec métadonnées
+ * @throws {Error} Si XML malformé ou erreur IO
+ * @example
+ * const result = await convertXmlToHtml(xmlData, './output.html', {
+ *   includeAttachments: true
+ * });
+ */
+async function convertXmlToHtml(xmlContent, outputPath, options = {}) {
+  // Implémentation...
+}
+```
+
+#### README sections requises
+- **Installation** : Prérequis et étapes
+- **Utilisation** : Exemples concrets
+- **API** : Documentation fonctions publiques
+- **Configuration** : Options disponibles
+- **Dépannage** : Problèmes courants
+
+### Mise à jour CHANGELOG
+```markdown
+## [2.1.0] - 2025-01-26
+
+### ✨ Nouvelles fonctionnalités
+- Intégration ERP via API REST
+- Interface de conversion temps réel
+
+### 🐛 Corrections
+- Correction extraction contenu XML `<body>`
+- Amélioration gestion erreurs serveur
+
+### 🔄 Améliorations
+- Performance conversion +50%
+- Interface responsive optimisée
+```
+
+---
+
+## 🎯 Priorités de développement
+
+### Version actuelle (v2.0)
+- ✅ Architecture modulaire stable
+- ✅ Interface web complète
+- ✅ Conversion XML→HTML robuste
+
+### Prochaines versions
+- **v2.1** : Intégration ERP
+- **v2.2** : Multi-thèmes
+- **v2.3** : API REST étendue
+- **v3.0** : Architecture cloud
+
+### Contributions recherchées
+- 🔧 **Tests automatisés** : Augmenter couverture
+- 🎨 **Thèmes** : Nouveaux designs CSS
+- 🌍 **Internationalisation** : Support multilingue
+- 📱 **Mobile** : Optimisations PWA
+- ⚡ **Performance** : Optimisations algorithmes
+
+---
+
+## 💬 Support et assistance
+
+### Canaux de communication
+- **🐛 Issues GitHub** : Bugs et demandes de fonctionnalités
+- **💬 Discussions** : Questions et échanges techniques
+- **📧 Email** : contact@optimxmlpreview.com
+- **📖 Wiki** : Documentation technique étendue
+
+### Processus de review
+1. **Review automatique** : Tests CI/CD passent
+2. **Review technique** : Code conforme aux standards
+3. **Review fonctionnelle** : Fonctionnalité validée
+4. **Merge** : Après approbation mainteneur
+
+---
+
+<div align="center">
+
+**🤝 Contribuer à OptimXmlPreview v2.0**  
+*Ensemble, créons le meilleur outil de conversion d'emails juridiques*
+
+[← Retour README](README.md) • [🏗️ Architecture](ARCHITECTURE.md) • [📋 Issues](https://github.com/votre-org/OptimXmlPreview/issues)
+
+</div>
 
 ---
 
