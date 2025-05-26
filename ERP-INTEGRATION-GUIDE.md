@@ -5,7 +5,7 @@
 Cette fonctionnalité permet d'envoyer automatiquement les documents HTML convertis vers un système ERP externe via des API REST. Elle inclut :
 
 - ✅ **Gestion d'erreurs robuste** avec retry automatique
-- ✅ **Mode dégradé** si l'ERP n'est pas accessible 
+- ✅ **Mode dégradé** si l'ERP n'est pas accessible
 - ✅ **Configuration flexible** via variables d'environnement
 - ✅ **Logging détaillé** pour le débogage
 - ✅ **Support multi-ERP** (SAP, Sage, Odoo, Custom)
@@ -312,10 +312,10 @@ ENV ERP_TIMEOUT=30000
 
 ### **Contact**
 
-- 📧 **Email** : support@optimxmlpreview.com  
+- 📧 **Email** : <support@optimxmlpreview.com>  
 - 🐛 **Issues** : GitHub Issues
 - 📚 **Documentation** : Wiki du projet
 
 ---
 
-**OptimXmlPreview v2.1** - Conversion XML vers HTML avec intégration ERP professionnelle 🏢 
+**OptimXmlPreview v2.1** - Conversion XML vers HTML avec intégration ERP professionnelle 🏢
