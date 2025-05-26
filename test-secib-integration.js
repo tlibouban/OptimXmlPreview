@@ -7,6 +7,9 @@
  * API Swagger: https://secibneo.secib.fr/7.4.0/swagger/ui/index#!/
  */
 
+// Charger les variables d'environnement depuis .env
+require('dotenv').config();
+
 const { SECIBIntegrationClient } = require('./erp-secib-integration.js');
 
 /**
@@ -81,10 +84,6 @@ async function runSECIBTests() {
   console.log('\n📋 Test 3: Headers SECIB');
   try {
     const client = new SECIBIntegrationClient(TEST_SECIB_CONFIG);
-
-    // Simuler la préparation des headers
-    const mockOptions = { headers: {} };
-    const url = 'https://secibneo.secib.fr/7.4.0/api/v1/documents';
 
     // Note: On ne peut pas vraiment tester fetchWithRetry sans faire un vrai appel,
     // mais on peut valider la configuration

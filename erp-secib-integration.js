@@ -13,6 +13,9 @@
  * @version 1.0.0
  */
 
+// Charger les variables d'environnement depuis .env
+require('dotenv').config();
+
 const { ERPIntegrationClient } = require('./erp-integration.js');
 
 /**
