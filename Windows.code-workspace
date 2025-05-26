@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"name": "OptimXmlPreview",
+			"uri": "vscode-remote://ssh-remote+192.168.1.32/home/titan/Apps/OptimXmlPreview"
+		}
+	],
+	"remoteAuthority": "ssh-remote+192.168.1.32",
+	"settings": {}
+}
