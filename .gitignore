@@ -1,0 +1,91 @@
+# =============================================================================
+# OptimXmlPreview v2.0 - Configuration Git Ignore
+# =============================================================================
+
+# Dépendances Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.npm
+.pnpm-debug.log*
+
+# Fichiers de sortie générés
+Output/*.html
+Output/*.htm
+Output/logo.jpg
+Output/logo.png
+
+# Build et distribution
+dist/
+build/
+*.exe
+*.app
+*.deb
+*.rpm
+
+# Logs et rapports
+logs/
+*.log
+coverage/
+.nyc_output/
+
+# Fichiers temporaires et cache
+.cache/
+.temp/
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Configuration IDE et éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Configuration OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Variables d'environnement
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Tests et couverture
+jest-html-reporters-attach/
+test-results/
+playwright-report/
+
+# Données de test personnelles (garder les exemples)
+Data/*.xml
+!Data/exemple.xml
+
+# Documentation générée
+docs/
+jsdoc-output/
+
+# Backup et fichiers de sauvegarde
+*.bak
+*.backup
+*.old
+
+# Fichiers de lock de l'éditeur
+.eslintcache
+*.tsbuildinfo
+
+# Fichiers de configuration locale
+.env.*.local
+config/local.json
+local.config.js 

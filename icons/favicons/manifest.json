@@ -1,0 +1,16 @@
+{
+  "name": "OptimXmlPreview",
+  "short_name": "OptimXML",
+  "description": "Visualiseur d'emails XML pour eBarreau",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#141325",
+  "theme_color": "#141325",
+  "icons": [
+    {
+      "src": "img/icon-com.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

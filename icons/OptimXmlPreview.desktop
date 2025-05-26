@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=OptimXmlPreview v2.0
+Comment=Visualiseur d'emails XML pour eBarreau
+Exec=cmd /c "cd /d "C:\Users\LIBOUBAN.INTRANET\OneDrive - SEPTEO\01- C O D E\OptimXmlPreview" && OptimXmlPreview-Launcher.bat"
+Icon=C:\Users\LIBOUBAN.INTRANET\OneDrive - SEPTEO\01- C O D E\OptimXmlPreview/img/icon-com.svg
+Terminal=false
+Categories=Office;Email;
+StartupNotify=true

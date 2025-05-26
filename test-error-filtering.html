@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test de filtrage des erreurs d'extensions</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: #f5f5f5;
+      }
+      .test-section {
+        background: white;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .test-button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 0.5rem;
+      }
+      .test-button:hover {
+        background: #2563eb;
+      }
+      .error-log {
+        background: #fee;
+        border: 1px solid #fcc;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.875rem;
+      }
+      .success-log {
+        background: #efe;
+        border: 1px solid #cfc;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+        color: #060;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🧪 Test de filtrage des erreurs d'extensions</h1>
+
+    <div class="test-section">
+      <h2>État du filtrage</h2>
+      <p>Ce test vérifie si les erreurs d'extensions de navigateur sont correctement filtrées.</p>
+      <div id="filterStatus" class="success-log">✅ Filtrage des erreurs activé</div>
+    </div>
+
+    <div class="test-section">
+      <h2>Tests d'erreurs simulées</h2>
+      <p>Cliquez sur les boutons pour simuler différents types d'erreurs :</p>
+
+      <button class="test-button" onclick="testRuntimeError()">Test runtime.lastError</button>
+
+      <button class="test-button" onclick="testChannelError()">Test message channel closed</button>
+
+      <button class="test-button" onclick="testAsyncError()">
+        Test asynchronous response error
+      </button>
+
+      <button class="test-button" onclick="testNormalError()">
+        Test erreur normale (doit apparaître)
+      </button>
+
+      <div id="testResults"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Instructions</h2>
+      <p>Ouvrez la console du navigateur (F12) et cliquez sur les boutons de test.</p>
+      <p><strong>Résultat attendu :</strong></p>
+      <ul>
+        <li>
+          Les 3 premiers boutons ne doivent <strong>PAS</strong> afficher d'erreurs dans la console
+        </li>
+        <li>Le dernier bouton doit afficher une erreur normale dans la console</li>
+      </ul>
+    </div>
+
+    <!-- Inclure le script de filtrage des erreurs -->
+    <script src="assets/js/navigation-interface.js"></script>
+
+    <script>
+      // Scripts de test
+      function testRuntimeError() {
+        // Simuler une erreur runtime.lastError
+        console.error(
+          'Unchecked runtime.lastError: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received'
+        );
+        addTestResult('Runtime error simulée (doit être filtrée)', 'success');
+      }
+
+      function testChannelError() {
+        // Simuler une erreur de channel fermé
+        console.error('Error: message channel closed before a response was received');
+        addTestResult('Channel error simulée (doit être filtrée)', 'success');
+      }
+
+      function testAsyncError() {
+        // Simuler une erreur de réponse asynchrone
+        console.error('A listener indicated an asynchronous response by returning true');
+        addTestResult('Async error simulée (doit être filtrée)', 'success');
+      }
+
+      function testNormalError() {
+        // Simuler une erreur normale qui doit passer
+        console.error("Erreur normale de l'application - ceci doit apparaître dans la console");
+        addTestResult('Erreur normale simulée (doit apparaître dans la console)', 'error');
+      }
+
+      function addTestResult(message, type) {
+        const resultsDiv = document.getElementById('testResults');
+        const resultElement = document.createElement('div');
+        resultElement.className = type === 'success' ? 'success-log' : 'error-log';
+        resultElement.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+        resultsDiv.appendChild(resultElement);
+      }
+
+      // Vérifier que le filtrage est actif
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log("🔧 Test de filtrage des erreurs d'extensions initialisé");
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,176 @@
+{
+  "name": "optim-xml-preview",
+  "version": "2.0.0",
+  "description": "Convertisseur professionnel d'emails juridiques XML vers HTML avec interface de navigation intégrée",
+  "main": "ConvertXmlToHtml.js",
+  "bin": {
+    "optim-xml-preview": "./ConvertXmlToHtml.js"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/**/*",
+      "Data/**/*",
+      "Output/**/*",
+      "img/**/*",
+      "index.html"
+    ],
+    "targets": [
+      "node18-win-x64",
+      "node18-linux-x64",
+      "node18-macos-x64"
+    ],
+    "outputPath": "dist/"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "convert": "node ConvertXmlToHtml.js --output ./Output --input-dir ./Data",
+    "convert:single": "node ConvertXmlToHtml.js --output ./Output --source-file",
+    "view": "npm run convert",
+    "build": "pkg . --output ./dist/OptimXmlPreview",
+    "build:all": "pkg . --targets node18-win-x64,node18-linux-x64,node18-macos-x64 --output ./dist/OptimXmlPreview",
+    "clean": "rimraf Output/*.html dist/ coverage/",
+    "dev": "nodemon ConvertXmlToHtml.js --output ./Output --input-dir ./Data",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:watch": "jest --watch",
+    "lint": "eslint *.js",
+    "lint:fix": "eslint *.js --fix",
+    "format": "prettier --write *.js *.json *.md",
+    "docs": "jsdoc *.js -d ./docs",
+    "validate": "npm run lint && npm run test",
+    "preversion": "npm run validate",
+    "postversion": "git push && git push --tags",
+    "setup": "npm install && echo 'OptimXmlPreview v2.0 installé avec succès!'",
+    "demo": "node ConvertXmlToHtml.js --help",
+    "prepare": "npm run lint && npm run test",
+    "prepublishOnly": "npm run validate && npm run build"
+  },
+  "keywords": [
+    "xml",
+    "html",
+    "converter",
+    "email",
+    "juridique",
+    "rpva",
+    "avocat",
+    "preview",
+    "visualisation",
+    "batch-processing",
+    "legal-tech",
+    "document-conversion",
+    "xml-parser",
+    "html-generator",
+    "email-viewer",
+    "open-source",
+    "mit-license"
+  ],
+  "author": {
+    "name": "OptimXmlPreview Contributors",
+    "email": "contact@optimxmlpreview.com",
+    "url": "https://github.com/votre-username/OptimXmlPreview"
+  },
+  "contributors": [
+    {
+      "name": "Votre Nom",
+      "email": "votre.email@example.com"
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/votre-username/OptimXmlPreview#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/votre-username/OptimXmlPreview.git"
+  },
+  "bugs": {
+    "url": "https://github.com/votre-username/OptimXmlPreview/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/votre-username"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsdom": "^24.0.0",
+    "xmldom": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "jsdoc": "^4.0.0",
+    "nodemon": "^3.0.0",
+    "prettier": "^3.0.0",
+    "rimraf": "^5.0.0"
+  },
+  "optionalDependencies": {
+    "pkg": "^5.8.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "*.js",
+      "!node_modules/**",
+      "!dist/**",
+      "!coverage/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "es2022": true,
+      "jest": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2022,
+      "sourceType": "commonjs"
+    },
+    "rules": {
+      "no-console": "off",
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_"
+        }
+      ],
+      "prefer-const": "error",
+      "no-var": "error"
+    }
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "printWidth": 100
+  },
+  "files": [
+    "ConvertXmlToHtml.js",
+    "ConvertAndView.bat",
+    "ConvertOneFile.bat",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "img/",
+    "Data/exemple.xml"
+  ]
+}
