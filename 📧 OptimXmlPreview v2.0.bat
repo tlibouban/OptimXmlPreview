@@ -60,4 +60,4 @@ REM Si on arrive ici, c'est que le serveur s'est arrete
 echo.
 echo 🔴 Serveur arrete.
 echo.
-pause 
+pause
