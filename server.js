@@ -11,9 +11,11 @@ const path = require('path');
 const fs = require('fs').promises;
 const fsSync = require('fs');
 const { spawn } = require('child_process');
+const multer = require('multer');
 
 const app = express();
 const PORT = 3000;
+const CONFIG_PATH = path.join(__dirname, 'email-config.json');
 
 // Middleware
 app.use(cors());
@@ -37,6 +39,42 @@ const Logger = {
   warning: (message) => console.log(`${COLORS.YELLOW}⚠ ${message}${COLORS.RESET}`),
   info: (message) => console.log(`${COLORS.CYAN}ℹ ${message}${COLORS.RESET}`),
 };
+
+// Création d'un fichier de configuration par défaut si absent
+async function ensureDefaultEmailConfig() {
+  try {
+    await fs.access(CONFIG_PATH);
+  } catch (_) {
+    const defaultConfig = {
+      subjectTemplate: 'OptimXmlPreview – documents',
+      bodyTemplate:
+        'Bonjour,\n\nVeuillez trouver ci-joint le(s) document(s) suivant(s) :\n{{fileList}}\n\nCordialement.',
+    };
+    await fs.writeFile(CONFIG_PATH, JSON.stringify(defaultConfig, null, 2), 'utf8');
+    Logger.info('Fichier email-config.json créé avec la configuration par défaut');
+  }
+}
+
+ensureDefaultEmailConfig();
+
+// Configuration Multer (upload vers ./Data en conservant le nom original)
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, 'Data'));
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20 Mo
+  fileFilter: (req, file, cb) => {
+    const ok = /\.x?xml$/i.test(file.originalname);
+    cb(ok ? null : new Error('Type de fichier non supporté'), ok);
+  },
+});
 
 /**
  * Route principale - Sert la page d'index
@@ -74,6 +112,47 @@ app.get('/', async (req, res) => {
   } catch (error) {
     Logger.error(`Erreur lors du service de l'index: ${error.message}`);
     res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+});
+
+/**
+ * API - Upload de fichiers XML puis conversion
+ */
+app.post('/api/upload-xml', upload.array('files'), async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, error: 'Aucun fichier reçu' });
+    }
+
+    Logger.info(`Upload reçu: ${req.files.length} fichier(s) – démarrage de la conversion...`);
+
+    const conversionProcess = spawn(
+      'node',
+      ['ConvertXmlToHtml.js', '--output', './Output', '--input-dir', './Data'],
+      {
+        shell: true,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      }
+    );
+
+    let stdout = '';
+    let stderr = '';
+
+    conversionProcess.stdout.on('data', (d) => (stdout += d.toString()));
+    conversionProcess.stderr.on('data', (d) => (stderr += d.toString()));
+
+    conversionProcess.on('close', (code) => {
+      if (code === 0) {
+        Logger.success('Conversion après upload terminée');
+        res.json({ success: true, converted: req.files.length });
+      } else {
+        Logger.error(`Conversion échouée après upload (code: ${code})`);
+        res.status(500).json({ success: false, error: 'Erreur conversion', stderr });
+      }
+    });
+  } catch (error) {
+    Logger.error(`Erreur /api/upload-xml: ${error.message}`);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -181,7 +260,9 @@ app.get('/api/status', async (req, res) => {
 
     try {
       const dataFiles = await fs.readdir('./Data');
-      xmlCount = dataFiles.filter((file) => file.endsWith('.xml')).length;
+      xmlCount = dataFiles.filter((file) =>
+        ['.xml', '.xeml'].includes(path.extname(file).toLowerCase())
+      ).length;
     } catch (error) {
       // Dossier Data inexistant
     }
@@ -443,6 +524,138 @@ function calculateRelevanceScore(matches, searchTerm) {
 }
 
 /**
+ * API - Envoi d'email avec pièces jointes (Windows + Outlook)
+ */
+app.post('/api/send-email', async (req, res) => {
+  try {
+    const files = req.body?.files;
+    if (!Array.isArray(files) || files.length === 0) {
+      return res.status(400).json({ success: false, error: 'Aucun fichier à envoyer' });
+    }
+
+    // Seulement Windows (PowerShell + Outlook COM)
+    if (process.platform !== 'win32') {
+      return res
+        .status(501)
+        .json({ success: false, error: 'Fonctionnalité disponible uniquement sous Windows' });
+    }
+
+    // Lecture configuration d'email
+    let subjectTemplate = 'OptimXmlPreview – documents';
+    let bodyTemplate = '';
+    try {
+      const rawCfg = await fs.readFile(CONFIG_PATH, 'utf8');
+      const cfg = JSON.parse(rawCfg);
+      subjectTemplate = cfg.subjectTemplate || subjectTemplate;
+      bodyTemplate = cfg.bodyTemplate || bodyTemplate;
+    } catch (e) {
+      Logger.warning('Impossible de lire email-config.json : ' + e.message);
+    }
+
+    const fileNames = files.map((f) => path.basename(f));
+    // Génère \r\n\r\n entre chaque nom de fichier pour un "saut de paragraphe"
+    const fileList = fileNames.join('\r\n\r\n');
+
+    const firstFile = fileNames[0];
+
+    // Extraction de tous les numéros encadrés par des crochets dans toutes les PJ
+    const roles = fileNames
+      .map((fn) => {
+        const m = fn.match(/\[(.*?)\]/);
+        if (!m) return null;
+        // Remplacement de l'espace par un slash, ex: "25 00326" -> "25/00326"
+        return m[1].replace(/\s+/g, '/');
+      })
+      .filter(Boolean);
+
+    // Concatène avec " - " si plusieurs, sinon garde le seul élément ou chaîne vide
+    const role = roles.length > 1 ? roles.join(' - ') : roles[0] || '';
+
+    const subject = subjectTemplate
+      .replace(/{{fileName}}/g, firstFile)
+      .replace(/{{fileList}}/g, fileList)
+      .replace(/{{Role}}/g, role);
+
+    const body = bodyTemplate
+      .replace(/{{fileName}}/g, firstFile)
+      .replace(/{{fileList}}/g, fileList)
+      .replace(/{{Role}}/g, role);
+
+    const psSubject = subject.replace(/'/g, "''");
+    const psBody = body.replace(/'/g, "''").replace(/\r?\n/g, '<br>');
+
+    // Construction de la commande PowerShell encodée (UTF16-LE → Base64)
+    const escaped = files
+      .map((f) => path.resolve(f).replace(/'/g, "''"))
+      .map((f) => `'${f}'`)
+      .join(',');
+
+    const psScript = `
+      $files = @(${escaped});
+      $outlook = New-Object -ComObject Outlook.Application;
+      $mail = $outlook.CreateItem(0);
+      $mail.Subject = '${psSubject}';
+      $mail.HTMLBody = '${psBody}';
+      foreach ($f in $files) { $mail.Attachments.Add($f) }
+      $mail.Display();
+      try { $mail.GetInspector().Activate() } catch {}
+    `;
+
+    const encoded = Buffer.from(psScript, 'utf16le').toString('base64');
+
+    const pwsh = spawn('powershell.exe', ['-NoProfile', '-EncodedCommand', encoded], {
+      shell: true,
+      stdio: 'ignore',
+      detached: true,
+    });
+
+    pwsh.on('error', (err) => {
+      Logger.error(`Erreur PowerShell: ${err.message}`);
+    });
+
+    // On ne bloque pas la réponse HTTP ; on répond immédiatement
+    res.json({ success: true });
+  } catch (error) {
+    Logger.error(`Erreur /api/send-email: ${error.message}`);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * API - Lecture configuration d'email
+ */
+app.get('/api/email-config', async (req, res) => {
+  try {
+    const raw = await fs.readFile(CONFIG_PATH, 'utf8');
+    res.json({ success: true, config: JSON.parse(raw) });
+  } catch (error) {
+    Logger.error(`Erreur lecture email-config: ${error.message}`);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * API - Mise à jour configuration d'email
+ */
+app.post('/api/email-config', async (req, res) => {
+  try {
+    const { subjectTemplate, bodyTemplate } = req.body || {};
+    if (typeof subjectTemplate !== 'string' || typeof bodyTemplate !== 'string') {
+      return res.status(400).json({ success: false, error: 'Champs manquants ou invalides' });
+    }
+    await fs.writeFile(
+      CONFIG_PATH,
+      JSON.stringify({ subjectTemplate, bodyTemplate }, null, 2),
+      'utf8'
+    );
+    res.json({ success: true });
+  } catch (error) {
+    Logger.error(`Erreur écriture email-config: ${error.message}`);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
  * Gestion des erreurs 404
  */
 app.use((req, res) => {
@@ -468,6 +681,10 @@ ${COLORS.GREEN}│ API Endpoints:                              │${COLORS.RESET
 ${COLORS.CYAN}│ • POST /api/convert - Conversion d'emails   │${COLORS.RESET}
 ${COLORS.CYAN}│ • GET  /api/status  - Status de l'app       │${COLORS.RESET}
 ${COLORS.CYAN}│ • GET  /api/search  - Recherche full-text   │${COLORS.RESET}
+${COLORS.CYAN}│ • POST /api/send-email - Envoi d'email       │${COLORS.RESET}
+${COLORS.CYAN}│ • GET  /api/email-config - Lecture config   │${COLORS.RESET}
+${COLORS.CYAN}│ • POST /api/email-config - Mise à jour config│${COLORS.RESET}
+${COLORS.CYAN}│ • POST /api/upload-xml - Upload XML + convert │${COLORS.RESET}
 ${COLORS.BLUE}└─────────────────────────────────────────────┘${COLORS.RESET}
 
 ${COLORS.GREEN}Ouvrez votre navigateur à: ${COLORS.CYAN}http://localhost:${PORT}${COLORS.RESET}

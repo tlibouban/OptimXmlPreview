@@ -4,13 +4,13 @@ chcp 65001 >nul
 
 :: ====================================================================
 :: OptimXmlPreview v2.0 - Script de conversion fichier unique
-:: Convertit un fichier XML spécifique vers HTML (glisser-déposer)
+:: Convertit un fichier XML/XEML spécifique vers HTML (glisser-déposer)
 :: ====================================================================
 
 echo.
 echo ╔══════════════════════════════════════════════════════════════╗
-echo ║              OptimXmlPreview v2.0 - Visualisation           ║
-echo ║                     Fichier unique optimisé                 ║
+echo ║              OptimXmlPreview v2.0 - Visualisation            ║
+echo ║                     Fichier unique optimisé                  ║
 echo ╚══════════════════════════════════════════════════════════════╝
 echo.
 
@@ -25,13 +25,13 @@ if "%SOURCE_FILE%"=="" (
     echo.
     echo [ERREUR] Aucun fichier fourni en paramètre
     echo.
-    echo ╔════════════════════════════════════════════════════════════╗
-    echo ║                     MODE D'UTILISATION                    ║
-    echo ║                                                            ║
-    echo ║  Pour utiliser ce script :                                ║
-    echo ║  1. Glissez-déposez un fichier XML sur cette icône        ║
-    echo ║  2. Ou exécutez : ConvertOneFile.bat "chemin\fichier.xml" ║
-    echo ╚════════════════════════════════════════════════════════════╝
+    echo ╔════════════════════════════════════════════════════════════════╗
+    echo ║                     MODE D'UTILISATION                         ║
+    echo ║                                                                ║
+    echo ║  Pour utiliser ce script :                                     ║
+    echo ║  1. Glissez-déposez un fichier XML sur cette icône             ║
+    echo ║  2. Ou exécutez : ConvertOneFile.bat "chemin\fichier.xml|xeml" ║
+    echo ╚════════════════════════════════════════════════════════════════╝
     echo.
     goto :user_exit
 )
@@ -45,13 +45,13 @@ if not exist "%SOURCE_FILE%" (
 
 :: Vérification de l'extension XML
 for %%i in ("%SOURCE_FILE%") do set "FILE_EXT=%%~xi"
-if /i not "%FILE_EXT%"==".xml" (
+if /i not "%FILE_EXT%"==".xml" if /i not "%FILE_EXT%"==".xeml" (
     echo.
-    echo [ERREUR] Le fichier doit avoir l'extension .xml
+    echo [ERREUR] Le fichier doit avoir l'extension .xml ou .xeml
     echo.
     echo Fichier fourni : %~nx1
     echo Extension détectée : %FILE_EXT%
-    echo Extension requise : .xml
+    echo Extension requise : .xml ou .xeml
     echo.
     goto :error_exit
 )
@@ -63,7 +63,7 @@ for %%i in ("%SOURCE_FILE%") do (
     set "FILE_PATH=%%~fi"
 )
 
-echo [OK] Fichier XML valide détecté
+echo [OK] Fichier XML/XEML valide détecté
 echo [FICHIER] %FILE_NAME%
 echo [TAILLE] %FILE_SIZE% octets
 echo [CHEMIN] %FILE_PATH%
@@ -112,11 +112,11 @@ if not exist "%OUTPUT_DIR%" (
 :: Début de la conversion
 echo.
 echo ╔══════════════════════════════════════════════════════════════╗
-echo ║                    DÉBUT DE LA CONVERSION                   ║
+echo ║                    DÉBUT DE LA CONVERSION                    ║
 echo ╚══════════════════════════════════════════════════════════════╝
 echo.
 
-echo [ÉTAPE 1/2] Conversion du fichier XML vers HTML...
+echo [ÉTAPE 1/2] Conversion du fichier XML/XEML vers HTML...
 echo [SOURCE] %FILE_NAME%
 
 :: Exécution de la conversion avec gestion d'erreur détaillée
@@ -168,11 +168,11 @@ if %ERRORLEVEL% neq 0 (
 :: Message de succès
 echo.
 echo ╔══════════════════════════════════════════════════════════════╗
-echo ║                        SUCCÈS !                             ║
+echo ║                        SUCCÈS !                              ║
 echo ║                                                              ║
-echo ║  Votre email XML a été converti avec succès en HTML.        ║
-echo ║  Le fichier s'est ouvert automatiquement dans votre         ║
-echo ║  navigateur par défaut.                                     ║
+echo ║  Votre email XML a été converti avec succès en HTML.         ║
+echo ║  Le fichier s'est ouvert automatiquement dans votre          ║
+echo ║  navigateur par défaut.                                      ║
 echo ╚══════════════════════════════════════════════════════════════╝
 echo.
 
@@ -181,10 +181,10 @@ goto :success_exit
 :error_exit
 echo.
 echo ╔══════════════════════════════════════════════════════════════╗
-echo ║                        ÉCHEC                                ║
+echo ║                        ÉCHEC                                 ║
 echo ║                                                              ║
-echo ║  La conversion a échoué. Consultez les messages ci-dessus   ║
-echo ║  pour identifier et résoudre le problème.                   ║
+echo ║  La conversion a échoué. Consultez les messages ci-dessus    ║
+echo ║  pour identifier et résoudre le problème.                    ║
 echo ╚══════════════════════════════════════════════════════════════╝
 echo.
 echo Appuyez sur une touche pour fermer...

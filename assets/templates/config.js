@@ -9,8 +9,9 @@
 const CONFIG = {
   DELETE_SOURCE_FILES: false,
   CLEAR_DATA_FOLDER: false,
-  SUPPORTED_EXTENSIONS: ['.xml'],
+  SUPPORTED_EXTENSIONS: ['.xml', '.xeml'],
   OUTPUT_FILE_EXTENSION: '.html',
+  PDF_OUTPUT_DIR: './pdf',
   LOGO_RELATIVE_PATH: '../img/logo-blanc.png',
   LOGO_SOURCE_PATH: 'img/logo-blanc.png',
   FAVICON_RELATIVE_PATH: '../img/icon-com.svg',

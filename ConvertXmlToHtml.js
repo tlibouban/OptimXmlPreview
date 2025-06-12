@@ -12,6 +12,7 @@ const path = require('node:path');
 const { spawn } = require('node:child_process');
 const { DOMParser } = require('xmldom');
 const { JSDOM } = require('jsdom');
+const { convertHtmlToPdf } = require('./ConvertHtmlToPdf');
 
 /**
  * @typedef {Object} ProcessingOptions
@@ -39,6 +40,7 @@ const CONFIG = {
   ...CONFIG_FILE,
   LOGO_SOURCE_PATH: path.join('img', 'logo-blanc.png'),
   FAVICON_SOURCE_PATH: path.join('img', 'icon-com.svg'),
+  PDF_OUTPUT_DIR: CONFIG_FILE.PDF_OUTPUT_DIR || './pdf',
 };
 
 // Codes de couleur ANSI pour l'affichage console
@@ -192,6 +194,7 @@ function getFileIcon(fileName) {
     '.xls': 'fas fa-file-excel',
     '.ppt': 'fas fa-file-powerpoint',
     '.pptx': 'fas fa-file-powerpoint',
+    '.xeml': 'fas fa-file-code', // Icône XEML/Code
   };
 
   return iconMap[ext] || 'fas fa-file'; // Icône générique pour fichiers inconnus
@@ -238,7 +241,7 @@ function extractEmailMetadata(xmlContent) {
 
         // Regex pour détecter les noms de fichiers (extensions courantes)
         const fileRegex =
-          /([^\s]+\.(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|zip|rar|txt|xml))/gi;
+          /([^\s]+\.(pdf|doc|docx|xls|xlsx|ppt|pptx|jpg|jpeg|png|gif|zip|rar|txt|xml|xeml))/gi;
         const matches = bodyText.match(fileRegex);
 
         if (matches) {
@@ -478,6 +481,13 @@ async function convertXmlToHtml(xmlContent, outputHtmlPath, sourceFilePath, _out
     const htmlContent = dom.serialize();
     await fs.writeFile(outputHtmlPath, htmlContent, 'utf8');
 
+    // Génération silencieuse du PDF
+    try {
+      await convertHtmlToPdf(outputHtmlPath, CONFIG.PDF_OUTPUT_DIR);
+    } catch (err) {
+      Logger.warning(`PDF non généré pour ${path.basename(outputHtmlPath)}: ${err.message}`);
+    }
+
     return true;
   } catch (error) {
     Logger.error(`Erreur lors de la conversion de ${sourceFilePath}: ${error.message}`);
@@ -548,7 +558,6 @@ async function clearDataFolder(dataFolder) {
     }
 
     Logger.info(`Suppression de ${xmlFiles.length} fichier(s) XML du dossier Data...`);
-
     // Supprimer chaque fichier XML
     const deletePromises = xmlFiles.map(async (file) => {
       const filePath = path.join(dataFolder, file);
@@ -600,7 +609,7 @@ async function processSpecificFile(inputXmlPath, outputDir) {
     await fs.access(inputXmlPath);
 
     // Créer le chemin de sortie
-    const outputHtmlFileName = path.basename(inputXmlPath, '.xml') + CONFIG.OUTPUT_FILE_EXTENSION;
+    const outputHtmlFileName = path.parse(inputXmlPath).name + CONFIG.OUTPUT_FILE_EXTENSION;
     const outputHtmlPath = path.join(outputDir, outputHtmlFileName);
 
     // Lire et convertir le fichier
@@ -678,7 +687,7 @@ async function processAllFiles(inputDir, outputDir) {
 
       const batchPromises = batch.map(async (file) => {
         const inputXmlPath = path.join(inputDir, file);
-        const outputHtmlFileName = path.basename(file, '.xml') + CONFIG.OUTPUT_FILE_EXTENSION;
+        const outputHtmlFileName = path.parse(file).name + CONFIG.OUTPUT_FILE_EXTENSION;
         const outputHtmlPath = path.join(outputDir, outputHtmlFileName);
 
         try {
@@ -963,6 +972,10 @@ async function generateIndexPage(outputDir, recentFiles = []) {
           <i class="fas fa-sync-alt"></i>
           Convertir nouveaux emails
         </button>
+        <button class="send-selected-button" id="sendSelectedButton" disabled>
+          <i class="fas fa-paper-plane"></i>
+          Envoyer sélection
+        </button>
         <span class="email-count">${emailCountText}</span>
       </div>
     </div>
@@ -1065,6 +1078,7 @@ function generateEmailListHTML(htmlFiles, recentFiles = []) {
     const fileName = path.basename(file, '.html');
     const fileNameOnly = path.basename(file);
     const relativePath = `Output/${fileNameOnly}`;
+    const pdfPath = `pdf/${fileName}.pdf`;
     const displayName = fileName.length > 50 ? fileName.substring(0, 50) + '...' : fileName;
     const fileSize = '~5KB';
 
@@ -1074,16 +1088,15 @@ function generateEmailListHTML(htmlFiles, recentFiles = []) {
       : '';
 
     // Obtenir la date de modification du fichier
-    let fileDate = new Date().toLocaleDateString('fr-FR');
+    let fileDate = '';
     try {
-      const stat = fsSync.statSync(file);
-      fileDate = stat.mtime.toLocaleDateString('fr-FR');
-    } catch (error) {
-      // Utiliser la date actuelle en cas d'erreur
-    }
+      fileDate = fsSync.statSync(file).mtime.toLocaleDateString('fr-FR');
+    } catch (e) {}
 
+    // Checkbox + actions (PDF, mail, external)
     return `
-      <div class="email-item ${recentClass}" data-file="${relativePath}" data-index="${index}">
+      <div class="email-item ${recentClass}" data-file="${relativePath}" data-pdf="${pdfPath}" data-index="${index}">
+        <input type="checkbox" class="email-select" />
         <div class="email-icon">
           <i class="fas fa-envelope"></i>
         </div>
@@ -1095,7 +1108,9 @@ function generateEmailListHTML(htmlFiles, recentFiles = []) {
           </div>
         </div>
         <div class="email-actions">
-          <i class="fas fa-external-link-alt" title="Ouvrir dans un nouvel onglet"></i>
+          <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+          <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+          <i class="fas fa-external-link-alt open-html" title="Ouvrir dans un nouvel onglet"></i>
         </div>
       </div>
     `;
@@ -1563,6 +1578,13 @@ function getIndexPageCSS() {
       font-size: 1.25rem;
       flex-shrink: 0;
     }
+
+    .email-select { margin-right: 0.75rem; cursor:pointer; }
+    .email-actions i { cursor: pointer; }
+    .email-actions i + i { margin-left: 0.5rem; }
+    .send-selected-button { background: linear-gradient(135deg,#3b82f6 0%, #60a5fa 100%); color:white; border:none; padding:0.75rem 1.5rem; border-radius:0.5rem; font-size:0.875rem; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:0.5rem; transition:all 0.2s ease; box-shadow:0 2px 4px rgba(0,0,0,0.1);} 
+    .send-selected-button:hover { background: linear-gradient(135deg,#2563eb 0%, #3b82f6 100%); transform:translateY(-1px);} 
+    .send-selected-button:disabled { opacity:0.7; cursor:not-allowed; transform:none !important; }
   `;
 }
 
@@ -1632,7 +1654,7 @@ function getIndexPageJavaScript() {
           if (data.success) {
             // Succès
             button.innerHTML = '<i class="fas fa-check"></i> Conversion réussie !';
-            showNotification(\`Conversion terminée ! \${data.details.converted} fichier(s) converti(s)\`, 'success');
+            showNotification('Conversion terminée ! ' + data.details.converted + ' fichier(s) converti(s)', 'success');
             
             // Recharger la page après 2 secondes pour afficher les nouveaux emails
             setTimeout(() => {
@@ -1641,7 +1663,7 @@ function getIndexPageJavaScript() {
           } else {
             // Erreur
             button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erreur';
-            showNotification(\`Erreur de conversion: \${data.error}\`, 'error');
+            showNotification('Erreur de conversion: ' + data.error, 'error');
             
             // Rétablir le bouton après 3 secondes
             setTimeout(() => {
@@ -1666,11 +1688,8 @@ function getIndexPageJavaScript() {
       // Fonction pour afficher des notifications
       function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
-        notification.className = \`notification notification-\${type}\`;
-        notification.innerHTML = \`
-          <i class="fas \${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
-          <span>\${message}</span>
-        \`;
+        notification.className = 'notification notification-' + type;
+        notification.innerHTML = '<i class="fas ' + (type === "success" ? "fa-check-circle" : "fa-info-circle") + '"></i><span>' + message + '</span>'; 
         
         document.body.appendChild(notification);
         
@@ -1746,7 +1765,7 @@ function getIndexPageJavaScript() {
         }
 
         // En mode serveur, utiliser l'API de recherche
-        fetch(\`/api/search?q=\${encodeURIComponent(searchTerm)}\`)
+        fetch('/api/search?q=' + encodeURIComponent(searchTerm))
           .then(response => response.json())
           .then(data => {
             if (data.success) {
@@ -1843,7 +1862,7 @@ function getIndexPageJavaScript() {
           const badge = document.createElement('span');
           badge.className = 'match-badge';
           badge.textContent = match.type;
-          badge.title = \`Trouvé dans: \${match.type} - "\${match.value}"\`;
+          badge.title = 'Trouvé dans: ' + match.type + ' - "' + match.value + '"';
           badgeContainer.appendChild(badge);
         });
 
@@ -1855,14 +1874,12 @@ function getIndexPageJavaScript() {
         // Créer un message temporaire
         const messageDiv = document.createElement('div');
         messageDiv.className = 'no-results-message';
-        messageDiv.innerHTML = \`
-          <div class="no-results-content">
-            <i class="fas fa-search"></i>
-            <h3>Aucun résultat trouvé</h3>
-            <p>Aucun email ne correspond à votre recherche "<strong>\${searchTerm}</strong>"</p>
-            <small>La recherche porte sur les sujets, expéditeurs, destinataires, corps des messages et pièces jointes.</small>
-          </div>
-        \`;
+        messageDiv.innerHTML = '<div class="no-results-content">' +
+          '<i class="fas fa-search"></i>' +
+          '<h3>Aucun résultat trouvé</h3>' +
+          '<p>Aucun email ne correspond à votre recherche <strong>' + searchTerm + '</strong></p>' +
+          '<small>La recherche porte sur les sujets, expéditeurs, destinataires, corps des messages et pièces jointes.</small>' +
+        '</div>';
 
         // Insérer le message dans la liste des emails
         const emailList = document.getElementById('emailList');
@@ -1947,6 +1964,63 @@ function getIndexPageJavaScript() {
       // Interface chargée avec succès
       // En mode développement, décommenter la ligne suivante :
       // console.log('OptimXmlPreview Navigation Interface loaded successfully');
+
+      const checkboxes = document.querySelectorAll('.email-select');
+      const sendSelectedButton = document.getElementById('sendSelectedButton');
+
+      function updateSelected() {
+        const any = Array.from(checkboxes).some(cb => cb.checked);
+        sendSelectedButton.disabled = !any;
+      }
+
+      checkboxes.forEach(cb => {
+        cb.addEventListener('click', e => { e.stopPropagation(); updateSelected(); });
+      });
+
+      sendSelectedButton.addEventListener('click', function() {
+        const files = Array.from(checkboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.closest('.email-item').dataset.pdf);
+        if (files.length === 0) return;
+        fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ files })
+        })
+          .then(() => {
+            showNotification('Préparation Outlook avec ' + files.length + ' pièce(s) jointe(s)', 'success');
+          })
+          .catch(() => {
+            showNotification('Erreur lors de la préparation de l\'email', 'error');
+          });
+      });
+
+      // nouvelles actions PDF & mail par item
+      emailItems.forEach(item => {
+        const pdfIcon = item.querySelector('.open-pdf');
+        pdfIcon.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const pdf = item.dataset.pdf;
+          window.open(pdf, '_blank');
+        });
+
+        const mailIcon = item.querySelector('.send-mail');
+        mailIcon.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const pdf = item.dataset.pdf;
+          fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: [pdf] })
+          })
+            .then(() => {
+              showNotification('Email prêt dans Outlook', 'success');
+            })
+            .catch(() => {
+              showNotification('Erreur lors de la préparation de l\'email', 'error');
+            });
+        });
+      });
     });
   `;
 }

@@ -4,7 +4,7 @@ chcp 65001 >nul
 
 :: ====================================================================
 :: OptimXmlPreview v2.0 - Script de conversion en lot optimisé
-:: Convertit tous les fichiers XML d'un dossier vers HTML avec index
+:: Convertit tous les fichiers XML ou XEML d'un dossier vers HTML avec index
 :: ====================================================================
 
 echo.
@@ -57,7 +57,7 @@ if not exist "%OUTPUT_DIR%" (
 :: Vérification des fichiers XML à traiter
 echo [INFO] Recherche des fichiers XML...
 set "XML_COUNT=0"
-for %%f in ("%DATA_DIR%\*.xml") do (
+for %%f in ("%DATA_DIR%\*.xml" "%DATA_DIR%\*.xeml") do (
     if exist "%%f" set /a XML_COUNT+=1
 )
 
@@ -71,7 +71,7 @@ if %XML_COUNT% equ 0 (
     goto :user_exit
 )
 
-echo [OK] %XML_COUNT% fichier(s) XML trouvé(s) à traiter
+echo [OK] %XML_COUNT% fichier(s) XML/XEML trouvé(s) à traiter
 
 :: Début de la conversion
 echo.

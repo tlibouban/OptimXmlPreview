@@ -96,7 +96,9 @@
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
     "jsdom": "^24.0.0",
-    "xmldom": "^0.6.0"
+    "xmldom": "^0.6.0",
+    "puppeteer": "^21.4.1",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

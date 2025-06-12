@@ -1,0 +1,4 @@
+{
+  "subjectTemplate": "ABEILLE AVOCATS - RG n°{{Role}} - Postulation - Transmission d'AR RPVA",
+  "bodyTemplate": "<p>Mon Cher Confrère,</p><p><br></p><p>Je reviens vers vous dans l'affaire citée en références enrôlée sous le RG n°{{Role}}, dans le cadre de la postulation dont nous avons la charge.</p><p><br></p><p>Veuillez trouver ci-joint le(s) AR(s) suivant(s) :</p><p><br></p><ul><li><strong>{{fileList}}</strong></li></ul><p><br></p><p>Je ne manquerai pas de revenir vers vous lors de la réception de nouveaux éléments et reste à l'écoute de vos instructions.</p><p><br></p><p>Votre Bien Dévoué,</p>"
+}
