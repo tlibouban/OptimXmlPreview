@@ -262,6 +262,9 @@ async function convertXmlToHtml(xmlContent, outputHtmlPath, sourceFilePath, _out
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${pageTitle}</title>
+  <link rel="icon" href="img/icon-com.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" />
 </head>
 <body></body>
 </html>`);
@@ -921,7 +924,9 @@ async function generateIndexPage(outputDir, recentFiles = []) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OptimXmlPreview - Navigation des emails</title>
+  <link rel="icon" href="img/icon-com.svg" type="image/svg+xml">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" />
   <style>
     ${getIndexPageCSS()}
   </style>
@@ -940,6 +945,9 @@ async function generateIndexPage(outputDir, recentFiles = []) {
         <button class="send-selected-button" id="sendSelectedButton" disabled>
           <i class="fas fa-paper-plane"></i>
           Envoyer sélection
+        </button>
+        <button class="settings-button" id="openSettings" title="Paramètres email">
+          <i class="fas fa-cog"></i>
         </button>
         <span class="email-count">${emailCountText}</span>
       </div>
@@ -994,8 +1002,32 @@ async function generateIndexPage(outputDir, recentFiles = []) {
     </div>
   </div>
 
+  <!-- Settings Modal -->
+  <div class="settings-modal" id="settingsModal" style="display:none;">
+    <div class="settings-dialog">
+      <div class="dialog-header">
+        <h3><i class="fas fa-cog"></i> Paramètres email</h3>
+        <button class="close-icon" id="closeSettings" title="Fermer"><i class="fas fa-times"></i></button>
+      </div>
+      <label for="subjectTemplateInput">Objet</label>
+      <input type="text" id="subjectTemplateInput" placeholder="Objet de l'email..." />
+      <label for="bodyQuill">Corps</label>
+      <div id="bodyQuill" style="height:200px; background:white;"></div>
+      <div class="token-bar">
+        <span class="token">{{fileList}}</span>
+        <span class="token">{{fileName}}</span>
+      </div>
+      <div class="actions">
+        <button class="secondary" title="Annuler">Annuler</button>
+        <button id="saveSettings">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
   <script src="assets/js/navigation-interface.js"></script>
+  <!-- Onboarding modal (affiché seulement à la première visite) -->
+  <script src="assets/js/onboarding.js"></script>
 </body>
 </html>`;
 
@@ -1552,6 +1584,31 @@ function getIndexPageCSS() {
     .send-selected-button { background: linear-gradient(135deg,#3b82f6 0%, #60a5fa 100%); color:white; border:none; padding:0.75rem 1.5rem; border-radius:0.5rem; font-size:0.875rem; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:0.5rem; transition:all 0.2s ease; box-shadow:0 2px 4px rgba(0,0,0,0.1);} 
     .send-selected-button:hover { background: linear-gradient(135deg,#2563eb 0%, #3b82f6 100%); transform:translateY(-1px);} 
     .send-selected-button:disabled { opacity:0.7; cursor:not-allowed; transform:none !important; }
+
+    /* Settings button */
+    .settings-button { background:#f3f4f6; color:#374151; border:none; padding:0.6rem 0.8rem; border-radius:0.5rem; font-size:0.9rem; cursor:pointer; margin-left:0.5rem; transition:all 0.2s ease; display:flex; align-items:center; }
+    .settings-button i { font-size:1rem; }
+    .settings-button:hover { background:#e5e7eb; transform:translateY(-1px); }
+
+    /* Settings Modal */
+    .settings-modal { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:none; align-items:center; justify-content:center; z-index:2000; }
+    .settings-dialog { background:white; border-radius:0.75rem; width:95%; max-width:640px; box-shadow:0 20px 40px rgba(0,0,0,0.25); padding:1.5rem 2rem; display:flex; flex-direction:column; gap:1rem; }
+    .dialog-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
+    .dialog-header h3 { font-size:1.25rem; font-weight:600; display:flex; gap:0.5rem; align-items:center; margin:0; }
+    .dialog-header i { color:#3b82f6; }
+    .close-icon { background:none; border:none; font-size:1.25rem; cursor:pointer; color:#6b7280; }
+    .close-icon:hover { color:#ef4444; }
+    .settings-dialog label { font-weight:500; font-size:0.875rem; color:#374151; }
+    .settings-dialog input { border:1px solid #d1d5db; border-radius:0.375rem; padding:0.6rem 0.75rem; font-size:0.9rem; }
+    .token-bar { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem; }
+    .token { background:#e0f2fe; color:#0284c7; padding:0.25rem 0.5rem; border-radius:0.375rem; font-size:0.8rem; cursor:pointer; }
+    .token:hover { background:#bae6fd; }
+    .actions { display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1rem; }
+    .actions button { border:none; padding:0.6rem 1.2rem; border-radius:0.375rem; font-size:0.9rem; cursor:pointer; }
+    .actions .secondary { background:#e5e7eb; color:#374151; }
+    .actions .secondary:hover { background:#d1d5db; }
+    #saveSettings { background:#3b82f6; color:white; }
+    #saveSettings:hover { background:#2563eb; }
   `;
 }
 

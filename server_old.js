@@ -87,8 +87,6 @@ app.get('/', async (req, res) => {
     <p>Veuillez d'abord convertir des emails XML pour accéder à l'interface.</p>
     <p>Utilisez : <code>node src/convert/ConvertXmlToHtml.js -o ./Output -i ./Data</code></p>
   </div>
-  <script src="assets/js/navigation-interface.js"></script>
-  <script src="assets/js/onboarding.js"></script>
 </body>
 </html>`;
       await fs.writeFile('index.html', basicIndexHTML);

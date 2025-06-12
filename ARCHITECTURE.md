@@ -1,301 +1,99 @@
-# 🏗️ Architecture Technique - OptimXmlPreview v2.0
+# 🏗️ Architecture Technique – OptimXmlPreview v2.0
 
-## Documentation technique approfondie
+> Ce document décrit la conception interne de l'application, les responsabilités de chaque module et les flux de données principaux.
 
----
+## Sommaire
 
-## 📋 Table des Matières
-
-- [Vue d'ensemble technique](#-vue-densemble-technique)
-- [Principes architecturaux](#-principes-architecturaux)
-- [Structure modulaire](#-structure-modulaire)
-- [Configuration centralisée](#-configuration-centralisée)
-- [Modules principaux](#-modules-principaux)
-- [Chargement des ressources](#-chargement-des-ressources)
-- [Performance et optimisation](#-performance-et-optimisation)
-
----
-
-## 🎯 Vue d'ensemble technique
-
-**OptimXmlPreview v2.0** adopte une architecture modulaire moderne basée sur les meilleures pratiques Node.js. La refactorisation majeure de la v2.0 sépare clairement les préoccupations et externalise toutes les ressources pour une maintenabilité optimale.
-
-### Objectifs architecturaux
-- **🔧 Maintenabilité** : Code organisé, modulaire et documenté
-- **⚡ Performance** : Chargement optimisé et mise en cache
-- **🔄 Extensibilité** : Architecture ouverte aux évolutions
-- **🧪 Testabilité** : Modules isolés et testables unitairement
+- [🏗️ Architecture Technique – OptimXmlPreview v2.0](#️-architecture-technique--optimxmlpreview-v20)
+  - [Sommaire](#sommaire)
+  - [Vue d'ensemble](#vue-densemble)
+  - [Diagramme global](#diagramme-global)
+  - [Modules](#modules)
+  - [Flux de données](#flux-de-données)
+  - [Points d'extension](#points-dextension)
+  - [Qualités logicielles](#qualités-logicielles)
 
 ---
 
-## 📋 Principes architecturaux
+## Vue d'ensemble
 
-### 1. Séparation des préoccupations (SoC)
-Chaque aspect de l'application est isolé dans des modules dédiés :
+OptimXmlPreview est une application **Node.js** mono-repo composée de :
 
-```
-Présentation     →  assets/css/         (Styles)
-Logique métier   →  src/convert/ConvertXmlToHtml.js (Conversion)
-Configuration    →  assets/templates/   (Paramètres)
-Interface        →  assets/js/          (Interactions)
-```
+- un **moteur de conversion** (script CLI) ;
+- un **serveur Express** exposant l'API et l'interface web ;
+- des **ressources statiques** (CSS/JS) totalement externalisées ;
+- des **scripts Windows** facilitant l'intégration en environnement poste client.
 
-### 2. Configuration centralisée
-Un seul point de configuration pour toute l'application :
+Toutes les dépendances critiques (Express, xmldom, jsdom, Puppeteer) ont été vérifiées via **MCP context7** afin de garantir la conformité de leurs API.
 
-```javascript
-// assets/templates/config.js
-const CONFIG = {
-  ASSETS: { /* Chemins des ressources */ },
-  SERVER: { /* Configuration serveur */ },
-  MESSAGES: { /* Textes interface */ }
-};
-```
+---
 
-### 3. Modules réutilisables
-Exports clairs permettant la réutilisation :
+## Diagramme global
 
-```javascript
-module.exports = {
-  convertXmlToHtml,      // Fonction principale
-  extractEmailMetadata,  // Extraction métadonnées
-  CONFIG,                // Configuration
-  Logger                 // Système de logs
-};
+```mermaid
+graph TD
+    subgraph UI
+        Browser --HTTP--> Express
+    end
+    Express --spawn--> Converter[ConvertXmlToHtml.js]
+    Converter --HTML--> OutputDir[Output/*.html]
+    Converter --PDF--> PdfDir[pdf/*.pdf]
+    DataDir[Data/*.xml] --> Converter
+    Express --static--> OutputDir
+    Express --static--> Assets[assets/**/*]
 ```
 
 ---
 
-## 🗂️ Structure modulaire
+## Modules
 
-### Organisation des fichiers
-```
-OptimXmlPreview/
-├── 📁 assets/                    # Ressources externalisées
-│   ├── css/
-│   │   ├── email-viewer.css      # Styles visualisation emails
-│   │   └── navigation-interface.css # Styles interface navigation
-│   ├── js/
-│   │   └── navigation-interface.js # Logique navigation
-│   └── templates/
-│       └── config.js             # Configuration centralisée
-├── 📁 Data/                      # Fichiers XML source
-├── 📁 Output/                    # Fichiers HTML générés
-├── src/convert/ConvertXmlToHtml.js           # Module conversion principal
-├── server.js                     # Serveur Express.js
-└── index.html                    # Interface utilisateur
-```
-
-### Responsabilités des modules
-
-| Module                            | Responsabilité                   | Dépendances            |
-| --------------------------------- | -------------------------------- | ---------------------- |
-| `src/convert/ConvertXmlToHtml.js` | Conversion XML→HTML, métadonnées | `fs`, `path`, `xmldom` |
-| `server.js`                       | Serveur web, API REST            | `express`, `cors`      |
-| `assets/css/`                     | Présentation, styles, thèmes     | Aucune                 |
-| `assets/js/`                      | Interactions utilisateur         | DOM API                |
-| `assets/templates/config.js`      | Configuration globale            | Aucune                 |
+| Dossier/Fichier                   | Rôle                                     | Tech.                             | Dépendances                   |
+| --------------------------------- | ---------------------------------------- | --------------------------------- | ----------------------------- |
+| `src/convert/ConvertXmlToHtml.js` | Parsing XML, génération HTML, export PDF | Node 18, xmldom, jsdom, Puppeteer | `assets/templates/config.js`  |
+| `server.js`                       | API REST & serveur statique              | Express 4, Multer                 | convertisseur (child_process) |
+| `assets/css/`                     | Styles (email viewer, interface)         | CSS3                              | –                             |
+| `assets/js/`                      | Logique navigation + search côté client  | Vanilla JS                        | fetch API                     |
+| `assets/templates/config.js`      | Configuration unique                     | CommonJS                          | –                             |
+| `utils/logger.js`                 | Logging coloré unifié                    | ANSI                              | –                             |
 
 ---
 
-## ⚙️ Configuration centralisée
+## Flux de données
 
-### Structure de configuration
-```javascript
-// assets/templates/config.js
-const CONFIG = {
-  // Extensions et formats supportés
-  SUPPORTED_EXTENSIONS: ['.xml'],
-  OUTPUT_FILE_EXTENSION: '.html',
-  
-  // Chemins des ressources
-  ASSETS: {
-    CSS: {
-      EMAIL_VIEWER: 'assets/css/email-viewer.css',
-      NAVIGATION: 'assets/css/navigation-interface.css'
-    },
-    JS: {
-      NAVIGATION: 'assets/js/navigation-interface.js'
-    }
-  },
-  
-  // Configuration serveur
-  SERVER: {
-    DEFAULT_PORT: 3000,
-    STATIC_PATHS: {
-      OUTPUT: '/Output',
-      ASSETS: '/assets',
-      IMG: '/img'
-    }
-  },
-  
-  // Messages et textes
-  MESSAGES: {
-    APP_TITLE: "OptimXmlPreview",
-    FOOTER_TEXT: "OptimXmlPreview v2.0 - Visualisation d'emails eBarreau"
-  }
-};
-```
-
-### Avantages
-- **🎯 Point unique** pour tous les paramètres
-- **🔄 Réutilisabilité** entre modules
-- **🛠️ Maintenance simplifiée** sans modification du code
-- **🧪 Tests facilités** avec configuration mockable
+1. **Upload** (`/api/upload-xml`)
+   - Multer enregistre les fichiers dans `Data/`.
+   - Express appelle le convertisseur via `child_process.spawn`.
+2. **Conversion**
+   - Le script lit les XML, extrait les métadonnées avec **xmldom**.
+   - Génère un HTML propre avec JSDOM + CSS externe.
+   - Optionnel : export PDF via Puppeteer.
+3. **Index automatique**
+   - Après conversion, un `index.html` est régénéré listant les derniers fichiers.
+4. **Recherche** (`/api/search`)
+   - Parcours les HTML dans `Output/` et calcule un score de pertinence.
+5. **Affichage**
+   - Le navigateur charge l'index, puis les fichiers HTML individuels.
 
 ---
 
-## 🔧 Modules principaux
+## Points d'extension
 
-### src/convert/ConvertXmlToHtml.js - Moteur de conversion
-```javascript
-// Fonctions principales exportées
-{
-  convertXmlToHtml,         // Conversion complète XML→HTML
-  extractEmailMetadata,     // Extraction métadonnées email
-  formatDate,               // Formatage dates
-  getFileIcon,              // Icônes par type fichier
-  loadEmailViewerCSS,       // Chargement CSS email
-  loadNavigationJS,         // Chargement JS navigation
-  CONFIG,                   // Configuration
-  Logger                    // Système de logging
-}
-```
-
-### server.js - Serveur web intégré
-```javascript
-// API REST endpoints
-app.post('/api/convert', async (req, res) => {
-  // Conversion en temps réel
-});
-
-app.get('/api/status', (req, res) => {
-  // Statut application
-});
-
-// Serveur de fichiers statiques
-app.use('/Output', express.static('./Output'));
-app.use('/assets', express.static('./assets'));
-```
-
-### Système de logging unifié
-```javascript
-const Logger = {
-  success: (msg) => console.log(`${GREEN}✓ ${msg}${RESET}`),
-  error: (msg) => console.error(`${RED}✗ ${msg}${RESET}`),
-  warning: (msg) => console.log(`${YELLOW}⚠ ${msg}${RESET}`),
-  info: (msg) => console.log(`${CYAN}ℹ ${msg}${RESET}`)
-};
-```
+- **Adaptation UI** : remplacer/étendre les fichiers CSS/JS dans `assets/`.
+- **Formats supplémentaires** : ajouter une entrée dans `CONFIG.SUPPORTED_EXTENSIONS` + adapter `extractEmailMetadata`.
+- **Dépannage CLI** : toutes les options sont dans `--help` du convertisseur.
 
 ---
 
-## 📦 Chargement des ressources
+## Qualités logicielles
 
-### Chargement CSS externe
-```javascript
-function loadEmailViewerCSS() {
-  try {
-    return fs.readFileSync(CONFIG.ASSETS.CSS.EMAIL_VIEWER, 'utf8');
-  } catch (error) {
-    Logger.warning(`CSS externe indisponible: ${error.message}`);
-    return '/* CSS de secours */';
-  }
-}
-```
-
-### Chargement JavaScript modulaire
-```javascript
-function loadNavigationJS() {
-  try {
-    return fs.readFileSync(CONFIG.ASSETS.JS.NAVIGATION, 'utf8');
-  } catch (error) {
-    Logger.warning(`JS externe indisponible: ${error.message}`);
-    return '/* JS de secours */';
-  }
-}
-```
-
-### Gestion d'erreurs robuste
-- **🛡️ Fallback CSS/JS** : Styles/scripts de secours si fichiers manquants
-- **📝 Logs informatifs** : Messages clairs en cas de problème
-- **🔄 Continuité de service** : Application fonctionnelle même avec ressources manquantes
+| Qualité    | Mise en œuvre                                      |
+| ---------- | -------------------------------------------------- |
+| Modulaire  | Séparation claire Convertisseur / Serveur / UI     |
+| Extensible | Configuration centralisée + hooks CLI              |
+| Performant | Traitement par lots, usage stream/async I/O        |
+| Testable   | Fonctions pures exportées, logs injectables        |
+| Robustesse | Gestion d'erreurs try/catch + messages utilisateur |
 
 ---
 
-## ⚡ Performance et optimisation
-
-### Optimisations mises en place
-
-#### Chargement optimisé
-- **📦 Ressources à la demande** : CSS/JS chargés uniquement si nécessaires
-- **🔄 Cache navigateur** : Fichiers statiques cachés séparément
-- **⚡ Minification** : CSS optimisé pour la production
-
-#### Gestion mémoire
-- **🧹 Nettoyage automatique** : Suppression fichiers temporaires
-- **📊 Traitement par lots** : Conversion multiple optimisée
-- **⏱️ Timeouts appropriés** : Éviter les blocages
-
-#### Architecture réseau
-- **🌐 Serveur Express.js** : Performance et stabilité éprouvées
-- **📡 API REST** : Architecture scalable
-- **🔒 CORS configuré** : Sécurité et compatibilité
-
-### Métriques de performance
-```javascript
-// Exemples de mesures
-Conversion XML→HTML:     ~150ms par fichier
-Chargement interface:    ~100ms
-Serveur startup:         ~500ms
-Recherche temps réel:    <50ms (debounced)
-```
-
----
-
-## 🔮 Évolutions architecturales
-
-### Prochaines versions
-- **v2.1** : Système de plugins modulaire
-- **v2.2** : Support multi-thèmes
-- **v2.3** : API REST étendue
-- **v3.0** : Architecture microservices
-
-### Extensions possibles
-- **🎨 Thèmes dynamiques** : Chargement CSS selon préférences
-- **🌍 Internationalisation** : Configuration multilingue
-- **🔌 Plugins tiers** : Architecture d'extension
-- **📊 Analytics** : Métriques d'utilisation intégrées
-
----
-
-## 🧪 Tests et validation
-
-### Tests de l'architecture
-```bash
-# Validation structure
-npm run test:architecture
-
-# Tests d'intégration
-npm run test:integration
-
-# Performance benchmarks
-npm run test:performance
-```
-
-### Outils de développement
-- **ESLint** : Standards de code
-- **Prettier** : Formatage automatique
-- **JSDoc** : Documentation code
-- **Jest** : Tests unitaires
-
----
-
-<div align="center">
-
-**🏗️ Architecture OptimXmlPreview v2.0**  
-*Documentation technique complète*
-
-[← Retour README](README.md) • [📋 Configuration](assets/templates/config.js) • [🔧 Migration](MIGRATION-GUIDE.md)
-
-</div>
+*Document mis à jour : 2025-06-12*

@@ -58,6 +58,13 @@
 })();
 
 document.addEventListener('DOMContentLoaded', function () {
+  /* Charger dynamiquement la modale d'onboarding (toujours disponible) */
+  const onboardingPath = 'assets/js/onboarding.js';
+  if (!document.querySelector(`script[src="${onboardingPath}"]`)) {
+    const s = document.createElement('script');
+    s.src = onboardingPath;
+    document.body.appendChild(s);
+  }
   // Gestion avancée des erreurs d'extensions
   window.addEventListener('error', function (e) {
     if (
@@ -207,6 +214,44 @@ document.addEventListener('DOMContentLoaded', function () {
       const fileName = item.dataset.file;
       window.open(fileName, '_blank');
     });
+
+    // Ajout : Ouverture du PDF dans un nouvel onglet
+    const pdfLink = item.querySelector('.open-pdf');
+    if (pdfLink) {
+      pdfLink.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const pdfFile = item.dataset.pdf;
+        if (pdfFile) {
+          window.open(pdfFile, '_blank');
+        } else {
+          showNotification('PDF non disponible', 'error');
+        }
+      });
+    }
+
+    // Ajout : Envoi par email (pièce jointe unique)
+    const sendLink = item.querySelector('.send-mail');
+    if (sendLink) {
+      sendLink.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const pdfFile = item.dataset.pdf;
+        if (!pdfFile) {
+          showNotification('Pièce jointe manquante', 'error');
+          return;
+        }
+        fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ files: [pdfFile] }),
+        })
+          .then(() => {
+            showNotification('Préparation Outlook avec 1 pièce jointe', 'success');
+          })
+          .catch(() => {
+            showNotification("Erreur lors de la préparation de l'email", 'error');
+          });
+      });
+    }
   });
 
   // Recherche dans la liste

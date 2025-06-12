@@ -1,264 +1,171 @@
-# 🚀 OptimXmlPreview v2.0
+# ⚖️ OptimXmlPreview v2.0
 
-## Convertisseur professionnel d'emails juridiques XML vers HTML
+Convertisseur open-source d'e-mails juridiques eBarreau/RPVA (XML) vers HTML & PDF, avec interface web, moteur de recherche plein-texte et API REST.
 
-Application Node.js moderne pour la conversion et visualisation d'emails juridiques au format eBarreau/RPVA avec interface web intégrée.
+# Sommaire
 
----
-
-## 📋 Table des Matières
-
-- [Vue d'ensemble](#-vue-densemble)
-- [Installation rapide](#-installation-rapide)
-- [Utilisation](#-utilisation)
-- [Architecture](#-architecture)
-- [Configuration](#-configuration)
-- [Fonctionnalités](#-fonctionnalités)
-- [Documentation technique](#-documentation-technique)
-
----
-
-## 🎯 Vue d'ensemble
-
-### Description
-
-**OptimXmlPreview v2.0** transforme vos emails juridiques XML (format eBarreau/RPVA) en pages HTML élégantes avec navigation moderne. L'application propose une interface web complète avec serveur intégré pour une expérience utilisateur optimale.
-
-### Avantages clés
-
-- ✅ **Conversion automatique** XML → HTML avec mise en page professionnelle
-- ✅ **Interface web moderne** avec recherche et navigation intuitive  
-- ✅ **Serveur intégré** pour conversion en temps réel
-- ✅ **Architecture modulaire** maintenable et extensible
-- ✅ **Déploiement simple** via double-clic
+- [⚖️ OptimXmlPreview v2.0](#️-optimxmlpreview-v20)
+- [Sommaire](#sommaire)
+  - [Fonctionnalités](#fonctionnalités)
+  - [Installation Rapide](#installation-rapide)
+  - [Usage](#usage)
+    - [1️⃣ Interface Web](#1️⃣-interface-web)
+    - [2️⃣ CLI](#2️⃣-cli)
+    - [3️⃣ Upload direct via API](#3️⃣-upload-direct-via-api)
+  - [Workflows de Conversion](#workflows-de-conversion)
+  - [API REST](#api-rest)
+  - [Configuration](#configuration)
+  - [Structure du Projet](#structure-du-projet)
+  - [Dépendances \& Références](#dépendances--références)
+  - [Contribution](#contribution)
+  - [Licence](#licence)
 
 ---
 
-## ⚡ Installation rapide
+## Fonctionnalités
 
-### Prérequis
+- Conversion **XML/XEML → HTML** avec mise en page responsive et branding personnalisé.
+- Export **PDF** (Puppeteer) pour chaque e-mail converti.
+- Envoi des pdf générés par email, individuellement ou par lot.
+- **Interface web** (Express + vanilla JS) affichant la liste, la prévisualisation et un champ de recherche unifié.
+- **Recherche plein-texte** (sujet, expéditeur, date, corps, pièces jointes).
+- **API REST** (`/api/convert`, `/api/upload-xml`, `/api/status`, `/api/search`).
+- **Scripts batch** (Windows) et **CLI Node** multiplateforme.
 
-- **Node.js** v18+ ([télécharger](https://nodejs.org))
-- **Navigateur moderne** (Chrome, Firefox, Edge, Safari)
+---
 
-### Installation automatique (Windows)
+## Installation Rapide
 
 ```bash
-# Double-clic sur le fichier d'installation
-InstallOptimXmlPreview.bat
+# 1. Cloner
+$ git clone https://github.com/<org>/OptimXmlPreview.git && cd OptimXmlPreview
+
+# 2. Installer les dépendances
+$ npm install
+
+# 3. Lancer le serveur + interface (port 3000)
+$ npm start
 ```
 
-### Installation manuelle
+Windows 📦 : double-cliquez sur `OptimXmlPreview v2.0.bat` pour tout automatiser.
+
+---
+
+## Usage
+
+### 1️⃣ Interface Web
+
+1. Déposez vos fichiers `.xml` / `.xeml` dans `Data/` ;
+2. Ouvrez <http://localhost:3000> ;
+3. Cliquez sur « Convertir nouveaux e-mails ».
+
+### 2️⃣ CLI
 
 ```bash
-# Cloner et installer
-git clone https://github.com/votre-organisation/OptimXmlPreview.git
-cd OptimXmlPreview
-npm install
+# Conversion par lot
+$ node src/convert/ConvertXmlToHtml.js --input-dir ./Data --output ./Output
+
+# Conversion d'un seul fichier
+$ node src/convert/ConvertXmlToHtml.js --source-file ./Data/email.xml --output ./Output
+```
+
+### 3️⃣ Upload direct via API
+
+```bash
+POST /api/upload-xml
+Content-Type: multipart/form-data (field "files[]")
 ```
 
 ---
 
-## 🎮 Utilisation
+## Workflows de Conversion
 
-### Méthode 1: Lancement automatique (Recommandé)
-
-```bash
-# Double-clic sur l'icône Bureau ou exécuter:
-📧 OptimXmlPreview v2.0.bat
-```
-
-**→ Serveur + navigateur s'ouvrent automatiquement sur <http://localhost:3000>**
-
-### Méthode 2: Interface web
-
-1. **Placez vos fichiers .xml** dans le dossier `Data/`
-2. **Démarrez le serveur:** `start_server.bat` ou `npm start`
-3. **Ouvrez votre navigateur** sur `http://localhost:3000`
-4. **Cliquez sur "Convertir nouveaux emails"** dans l'interface
-
-### Méthode 3: Ligne de commande
-
-```bash
-# Conversion directe
-node src/convert/ConvertXmlToHtml.js -i ./Data -o ./Output
-
-# Serveur web
-node server.js
+```mermaid
+flowchart TD
+    A(XML source files)-->B[ConvertXmlToHtml.js]
+    B -->|HTML| C(Output/*.html)
+    B -->|PDF| D(pdf/*.pdf)
+    C --> E[index.html list]
+    E --> F[Express server]
+    subgraph UI
+        F --> G[Browser]
+    end
 ```
 
 ---
 
-## 🏗️ Architecture
+## API REST
 
-### Structure du projet
+| Méthode | Route                   | Corps                             | Réponse (succès)                              |
+| ------- | ----------------------- | --------------------------------- | --------------------------------------------- |
+| POST    | `/api/upload-xml`       | `multipart/form-data` (`files[]`) | `{success:true, converted:<n>}`               |
+| POST    | `/api/convert`          | _(vide)_                          | `{success:true, details:{converted, errors}}` |
+| GET     | `/api/status`           | –                                 | `{xmlFiles, htmlFiles, serverTime}`           |
+| GET     | `/api/search?q=<terme>` | –                                 | `{results:[…], totalResults}`                 |
 
-```
-OptimXmlPreview/
-├── 📁 assets/                    # Ressources externalisées
-│   ├── css/                      # Feuilles de style modulaires
-│   ├── js/                       # Scripts JavaScript
-│   └── templates/                # Configuration centralisée
-├── 📁 Data/                      # Fichiers XML source (input)
-├── 📁 Output/                    # Fichiers HTML générés (output)
-├── 📁 img/                       # Logos et ressources visuelles
-├── src/convert/ConvertXmlToHtml.js           # Module principal de conversion
-├── server.js                     # Serveur web Express.js
-├── index.html                    # Interface de navigation
-└── package.json                  # Configuration Node.js
-```
-
-### Principes architecturaux
-
-- **🔧 Modularité** : CSS, JS et configuration externalisés
-- **⚙️ Configuration centralisée** : Un seul fichier pour tous les paramètres
-- **📦 Réutilisabilité** : Modules exportables et testables
-- **🚀 Performance** : Chargement optimisé et cache navigateur
+Voir `server.js` pour le détail des codes d'erreur.
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
-### Configuration principale (`assets/templates/config.js`)
+Fichier central : `assets/templates/config.js`
 
-```javascript
-const CONFIG = {
-  // Ports et serveur
-  SERVER: {
-    DEFAULT_PORT: 3000,
-    STATIC_PATHS: { /* chemins statiques */ }
-  },
-  
-  // Ressources
-  ASSETS: {
-    CSS: {
-      EMAIL_VIEWER: 'assets/css/email-viewer.css',
-      NAVIGATION: 'assets/css/navigation-interface.css'
-    },
-    JS: {
-      NAVIGATION: 'assets/js/navigation-interface.js'
-    }
-  },
-  
-  // Messages application
-  MESSAGES: {
-    APP_TITLE: "OptimXmlPreview",
-    FOOTER_TEXT: "OptimXmlPreview v2.0 - Visualisation d'emails eBarreau"
-  }
+```js
+module.exports = {
+  SUPPORTED_EXTENSIONS: ['.xml', '.xeml'],
+  OUTPUT_FILE_EXTENSION: '.html',
+  SERVER: { DEFAULT_PORT: 3000 },
+  ASSETS: { CSS: { EMAIL_VIEWER: 'assets/css/email-viewer.css' } },
+  // …
 };
 ```
 
-### Variables d'environnement
+Variables d'environnement :
 
-```bash
-PORT=3000                    # Port du serveur (défaut: 3000)
-NODE_ENV=production          # Environnement (development/production)
+```
+PORT=3000   # Port HTTP
+NODE_ENV=production|development
 ```
 
 ---
 
-## ✨ Fonctionnalités
+## Structure du Projet
 
-### Interface web moderne
-
-- **📧 Liste d'emails** avec tri par date et badges "NOUVEAU"
-- **🔍 Recherche en temps réel** dans tous les champs
-- **⌨️ Navigation clavier** (flèches haut/bas)
-- **📱 Design responsive** mobile et desktop
-- **🎨 Thème professionnel** avec favicon personnalisé
-
-### Conversion avancée
-
-- **📄 Métadonnées automatiques** (expéditeur, destinataire, date, sujet)
-- **📎 Détection pièces jointes** avec icônes spécialisées
-- **🎯 Formatage intelligent** du contenu avec préservation mise en page
-- **🔄 Conversion en temps réel** via interface web
-
-### Serveur intégré
-
-- **🌐 API REST** avec endpoints `/api/convert` et `/api/status`
-- **📡 Conversion temps réel** via bouton interface
-- **🔔 Notifications visuelles** pour feedback utilisateur
-- **🛡️ Gestion d'erreurs robuste** avec messages explicites
-
----
-
-## 📚 Documentation technique
-
-### Guides détaillés
-
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Documentation technique approfondie
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Standards de développement  
-- **[ERP-INTEGRATION-GUIDE.md](ERP-INTEGRATION-GUIDE.md)** - Intégration systèmes ERP
-- **[CHANGELOG.md](CHANGELOG.md)** - Historique des versions
-
-### API et développement
-
-```javascript
-// Import du module
-const { 
-  convertXmlToHtml, 
-  CONFIG, 
-  Logger 
-} = require('./src/convert/ConvertXmlToHtml.js');
-
-// Utilisation
-const result = await convertXmlToHtml(xmlContent, outputPath);
-Logger.success('Conversion réussie!');
-```
-
-### Tests et validation
-
-```bash
-npm test                     # Tests complets
-npm run lint                 # Vérification code
-test_conversion.bat          # Test Windows conversion
+```text
+OptimXmlPreview/
+├─ assets/           # CSS / JS / templates
+├─ Data/             # Entrée XML
+├─ Output/           # Sortie HTML
+├─ pdf/              # Exports PDF
+├─ src/
+│  └─ convert/       # Convertisseurs
+│     └─ ConvertXmlToHtml.js
+├─ server.js         # API & UI Express
+└─ README.md
 ```
 
 ---
 
-## 🔧 Dépannage
+## Dépendances & Références
 
-### Problèmes courants
+- **Express 4** – Framework HTTP minimaliste ([docs](https://expressjs.com))
+- **xmldom 0.6** – Parsing XML DOM côté serveur.
+- **jsdom 24** – Émulation DOM pour transformer le HTML.
+- **Puppeteer 21** – Export PDF sans tête Chrome.
 
-**❌ Serveur ne démarre pas**
-
-- Vérifier que Node.js v18+ est installé
-- S'assurer que le port 3000 est libre
-- Exécuter `npm install` pour installer les dépendances
-
-**❌ CSS/JS non chargé**
-
-- Vérifier l'existence des fichiers dans `assets/`
-- Contrôler les chemins dans `assets/templates/config.js`
-
-**❌ Erreurs de conversion XML**
-
-- Valider le format XML des fichiers source
-- Consulter les logs console pour détails
-
-### Support et assistance
-
-- **📧 Issues GitHub** : Signaler problèmes et suggestions
-- **📖 Wiki** : Documentation technique étendue
-- **💬 Discussions** : Échanges avec la communauté
+La liste complète est dans `package.json`. Les snippets officiels de ces librairies ont été obtenus via **MCP context7** pour valider les flux d'initialisation et de routing.
 
 ---
 
-## 📄 Licence et Attribution
+## Contribution
 
-**Licence:** MIT - Voir fichier [LICENSE](LICENSE)  
-**Version:** 2.0.0  
-**Auteur:** [Votre Organisation]  
-**Dernière mise à jour:** Janvier 2025
+1. Fork → Branch feature → PR ;
+2. `npm run lint && npm test` avant commit ;
+3. Merci 💙 ! Voir `CONTRIBUTING.md`.
 
 ---
 
-<div align="center">
+## Licence
 
-**🎉 OptimXmlPreview v2.0**  
-*Convertisseur professionnel d'emails juridiques*
-
-[🌟 Contribuer](CONTRIBUTING.md) • [📋 Changelog](CHANGELOG.md) • [🏗️ Architecture](ARCHITECTURE.md)
-
-</div>
+MIT – © OptimXmlPreview Contributors.
