@@ -12,7 +12,7 @@ echo.
 :: Configuration des chemins
 set "DATA_DIR=%~dp0Data"
 set "OUTPUT_DIR=%~dp0Output"
-set "CONVERT_SCRIPT=%~dp0ConvertXmlToHtml.js"
+set "CONVERT_SCRIPT=%~dp0src\convert\ConvertXmlToHtml.js"
 
 echo [DEMO] Conversion des fichiers XML avec interface de navigation...
 echo.

@@ -219,7 +219,7 @@ npm run test:coverage
 ### Exemple test unitaire
 ```javascript
 // tests/unit/convert.test.js
-const { convertXmlToHtml, extractEmailMetadata } = require('../../ConvertXmlToHtml.js');
+const { convertXmlToHtml, extractEmailMetadata } = require('../../src/convert/ConvertXmlToHtml.js');
 
 describe('ConvertXmlToHtml', () => {
   test('devrait extraire les métadonnées email', () => {

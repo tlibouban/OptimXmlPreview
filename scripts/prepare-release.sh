@@ -119,7 +119,7 @@ required_files=(
     "CONTRIBUTING.md"
     "CHANGELOG.md"
     "package.json"
-    "ConvertXmlToHtml.js"
+    "src/convert/ConvertXmlToHtml.js"
     "UpdateIndex.js"
     "index.html"
 )

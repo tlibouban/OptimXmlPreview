@@ -12,6 +12,7 @@ const fs = require('fs').promises;
 const fsSync = require('fs');
 const { spawn } = require('child_process');
 const multer = require('multer');
+const { Logger, COLORS } = require('./utils/logger');
 
 const app = express();
 const PORT = 3000;
@@ -21,24 +22,6 @@ const CONFIG_PATH = path.join(__dirname, 'email-config.json');
 app.use(cors());
 app.use(express.json());
 app.use(express.static('.', { index: false })); // Servir tous les fichiers statiques
-
-// Couleurs pour les logs
-const COLORS = {
-  RESET: '\x1b[0m',
-  GREEN: '\x1b[32m',
-  YELLOW: '\x1b[33m',
-  BLUE: '\x1b[34m',
-  RED: '\x1b[31m',
-  CYAN: '\x1b[36m',
-};
-
-// Logger avec couleurs
-const Logger = {
-  success: (message) => console.log(`${COLORS.GREEN}✓ ${message}${COLORS.RESET}`),
-  error: (message) => console.error(`${COLORS.RED}✗ ${message}${COLORS.RESET}`),
-  warning: (message) => console.log(`${COLORS.YELLOW}⚠ ${message}${COLORS.RESET}`),
-  info: (message) => console.log(`${COLORS.CYAN}ℹ ${message}${COLORS.RESET}`),
-};
 
 // Création d'un fichier de configuration par défaut si absent
 async function ensureDefaultEmailConfig() {
@@ -102,7 +85,7 @@ app.get('/', async (req, res) => {
   <div class="message">
     <h1>OptimXmlPreview</h1>
     <p>Veuillez d'abord convertir des emails XML pour accéder à l'interface.</p>
-    <p>Utilisez : <code>node ConvertXmlToHtml.js -o ./Output -i ./Data</code></p>
+    <p>Utilisez : <code>node src/convert/ConvertXmlToHtml.js -o ./Output -i ./Data</code></p>
   </div>
 </body>
 </html>`;
@@ -128,7 +111,7 @@ app.post('/api/upload-xml', upload.array('files'), async (req, res) => {
 
     const conversionProcess = spawn(
       'node',
-      ['ConvertXmlToHtml.js', '--output', './Output', '--input-dir', './Data'],
+      ['src/convert/ConvertXmlToHtml.js', '--output', './Output', '--input-dir', './Data'],
       {
         shell: true,
         stdio: ['pipe', 'pipe', 'pipe'],
@@ -178,7 +161,7 @@ app.post('/api/convert', async (req, res) => {
     const conversionProcess = spawn(
       'node',
       [
-        'ConvertXmlToHtml.js',
+        'src/convert/ConvertXmlToHtml.js',
         '--output',
         './Output',
         '--input-dir',

@@ -17,7 +17,7 @@ echo.
 REM Etape 1 - Conversion avec le module principal
 echo [ETAPE 1/3] Conversion des emails XML...
 echo.
-node ConvertXmlToHtml.js --output ./Output --input-dir ./Data
+node src/convert/ConvertXmlToHtml.js --output ./Output --input-dir ./Data
 if %ERRORLEVEL% neq 0 (
     echo.
     echo ❌ ERREUR: Echec de la conversion des emails XML

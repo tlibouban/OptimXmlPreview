@@ -16,7 +16,7 @@ echo.
 
 :: Configuration des chemins
 set "OUTPUT_DIR=%~dp0Output"
-set "CONVERT_SCRIPT=%~dp0ConvertXmlToHtml.js"
+set "CONVERT_SCRIPT=%~dp0src\convert\ConvertXmlToHtml.js"
 set "SOURCE_FILE=%~1"
 
 :: Vérification du fichier fourni en paramètre

@@ -35,7 +35,7 @@ Chaque aspect de l'application est isolé dans des modules dédiés :
 
 ```
 Présentation     →  assets/css/         (Styles)
-Logique métier   →  ConvertXmlToHtml.js (Conversion)
+Logique métier   →  src/convert/ConvertXmlToHtml.js (Conversion)
 Configuration    →  assets/templates/   (Paramètres)
 Interface        →  assets/js/          (Interactions)
 ```
@@ -81,20 +81,20 @@ OptimXmlPreview/
 │       └── config.js             # Configuration centralisée
 ├── 📁 Data/                      # Fichiers XML source
 ├── 📁 Output/                    # Fichiers HTML générés
-├── ConvertXmlToHtml.js           # Module conversion principal
+├── src/convert/ConvertXmlToHtml.js           # Module conversion principal
 ├── server.js                     # Serveur Express.js
 └── index.html                    # Interface utilisateur
 ```
 
 ### Responsabilités des modules
 
-| Module                       | Responsabilité                   | Dépendances            |
-| ---------------------------- | -------------------------------- | ---------------------- |
-| `ConvertXmlToHtml.js`        | Conversion XML→HTML, métadonnées | `fs`, `path`, `xmldom` |
-| `server.js`                  | Serveur web, API REST            | `express`, `cors`      |
-| `assets/css/`                | Présentation, styles, thèmes     | Aucune                 |
-| `assets/js/`                 | Interactions utilisateur         | DOM API                |
-| `assets/templates/config.js` | Configuration globale            | Aucune                 |
+| Module                            | Responsabilité                   | Dépendances            |
+| --------------------------------- | -------------------------------- | ---------------------- |
+| `src/convert/ConvertXmlToHtml.js` | Conversion XML→HTML, métadonnées | `fs`, `path`, `xmldom` |
+| `server.js`                       | Serveur web, API REST            | `express`, `cors`      |
+| `assets/css/`                     | Présentation, styles, thèmes     | Aucune                 |
+| `assets/js/`                      | Interactions utilisateur         | DOM API                |
+| `assets/templates/config.js`      | Configuration globale            | Aucune                 |
 
 ---
 
@@ -147,7 +147,7 @@ const CONFIG = {
 
 ## 🔧 Modules principaux
 
-### ConvertXmlToHtml.js - Moteur de conversion
+### src/convert/ConvertXmlToHtml.js - Moteur de conversion
 ```javascript
 // Fonctions principales exportées
 {

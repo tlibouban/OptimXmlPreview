@@ -81,7 +81,7 @@ npm install
 
 ```bash
 # Conversion directe
-node ConvertXmlToHtml.js -i ./Data -o ./Output
+node src/convert/ConvertXmlToHtml.js -i ./Data -o ./Output
 
 # Serveur web
 node server.js
@@ -102,7 +102,7 @@ OptimXmlPreview/
 ├── 📁 Data/                      # Fichiers XML source (input)
 ├── 📁 Output/                    # Fichiers HTML générés (output)
 ├── 📁 img/                       # Logos et ressources visuelles
-├── ConvertXmlToHtml.js           # Module principal de conversion
+├── src/convert/ConvertXmlToHtml.js           # Module principal de conversion
 ├── server.js                     # Serveur web Express.js
 ├── index.html                    # Interface de navigation
 └── package.json                  # Configuration Node.js
@@ -200,7 +200,7 @@ const {
   convertXmlToHtml, 
   CONFIG, 
   Logger 
-} = require('./ConvertXmlToHtml.js');
+} = require('./src/convert/ConvertXmlToHtml.js');
 
 // Utilisation
 const result = await convertXmlToHtml(xmlContent, outputPath);

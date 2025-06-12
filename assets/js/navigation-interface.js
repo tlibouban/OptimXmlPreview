@@ -6,7 +6,7 @@
  */
 
 /* eslint-env browser */
-/* global */
+/* global Quill */
 
 // Filtrage avancé des erreurs d'extensions navigateur
 (() => {
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
           }, 3000);
         }
       })
-      .catch((error) => {
+      .catch(() => {
         // Erreur silencieuse pour éviter le spam console
         button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erreur réseau';
         showNotification('Erreur de connexion au serveur', 'error');
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function () {
           showNotification('Erreur lors de la recherche', 'error');
         }
       })
-      .catch((error) => {
+      .catch(() => {
         // Erreur réseau gérée par notification utilisateur
         showNotification('Erreur de connexion lors de la recherche', 'error');
       });
@@ -451,6 +451,209 @@ document.addEventListener('DOMContentLoaded', function () {
       emailItems.forEach((item) => item.classList.remove('active'));
       welcomeScreen.style.display = 'flex';
       contentFrame.style.display = 'none';
+    }
+  });
+
+  /* ----------------------  Sélection multiple & Envoi ---------------------- */
+  const checkboxes = document.querySelectorAll('.email-select');
+  const sendSelectedButton = document.getElementById('sendSelectedButton');
+  const selectAllCheckbox = document.getElementById('selectAll');
+
+  function updateSelected() {
+    const any = Array.from(checkboxes).some((cb) => cb.checked);
+    if (sendSelectedButton) sendSelectedButton.disabled = !any;
+    if (selectAllCheckbox) {
+      selectAllCheckbox.checked = Array.from(checkboxes).every((cb) => cb.checked);
+    }
+  }
+
+  checkboxes.forEach((cb) => {
+    cb.addEventListener('click', (e) => {
+      e.stopPropagation();
+      updateSelected();
+    });
+  });
+
+  if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener('change', () => {
+      const checked = selectAllCheckbox.checked;
+      checkboxes.forEach((cb) => (cb.checked = checked));
+      updateSelected();
+    });
+  }
+
+  sendSelectedButton &&
+    sendSelectedButton.addEventListener('click', () => {
+      const files = Array.from(checkboxes)
+        .filter((cb) => cb.checked)
+        .map((cb) => cb.closest('.email-item').dataset.pdf);
+      if (files.length === 0) return;
+      fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files }),
+      })
+        .then(() => {
+          showNotification(
+            `Préparation Outlook avec ${files.length} pièce(s) jointe(s)`,
+            'success'
+          );
+        })
+        .catch(() => {
+          showNotification("Erreur lors de la préparation de l'email", 'error');
+        });
+    });
+
+  /* ---------------------- Drag & Drop Upload XML ---------------------- */
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar && isServerMode) {
+    const highlight = () => sidebar.classList.add('drop-target');
+    const unHighlight = () => sidebar.classList.remove('drop-target');
+
+    ['dragenter', 'dragover'].forEach((evt) => {
+      sidebar.addEventListener(evt, (e) => {
+        e.preventDefault();
+        highlight();
+      });
+    });
+    ['dragleave', 'drop'].forEach((evt) => {
+      sidebar.addEventListener(evt, (e) => {
+        e.preventDefault();
+        unHighlight();
+      });
+    });
+
+    sidebar.addEventListener('drop', (e) => {
+      e.preventDefault();
+      unHighlight();
+      const xmlFiles = Array.from(e.dataTransfer.files).filter((f) => /\.x?xml$/i.test(f.name));
+      if (xmlFiles.length === 0) {
+        showNotification('Aucun fichier XML détecté', 'error');
+        return;
+      }
+
+      const formData = new FormData();
+      xmlFiles.forEach((f) => formData.append('files', f));
+
+      showNotification(`Envoi de ${xmlFiles.length} fichier(s) XML...`, 'info');
+      fetch('/api/upload-xml', { method: 'POST', body: formData })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.success) {
+            showNotification(`Conversion terminée (${d.converted} fichier(s))`, 'success');
+            setTimeout(() => location.reload(), 2000);
+          } else {
+            showNotification(`Erreur: ${d.error || 'Conversion'}`, 'error');
+          }
+        })
+        .catch(() => showNotification("Erreur réseau lors de l'upload", 'error'));
+    });
+  }
+
+  /* ---------------------- Settings Modal (Quill) ---------------------- */
+  const openSettingsBtn = document.getElementById('openSettings');
+  const settingsModal = document.getElementById('settingsModal');
+  const subjectInput = document.getElementById('subjectTemplateInput');
+  const closeSettingsBtn = document.getElementById('closeSettings');
+  const saveSettingsBtn = document.getElementById('saveSettings');
+  const tokens = settingsModal ? settingsModal.querySelectorAll('.token') : [];
+  let quill;
+
+  const ensureQuill = () => {
+    if (!quill) {
+      quill = new Quill('#bodyQuill', { theme: 'snow' });
+    }
+  };
+
+  // Focus tracking
+  let lastTarget = 'subject';
+  subjectInput && subjectInput.addEventListener('focus', () => (lastTarget = 'subject'));
+  ensureQuill();
+  quill.root.addEventListener('focus', () => (lastTarget = 'quill'));
+
+  tokens.forEach((t) => {
+    t.addEventListener('click', () => {
+      const token = t.textContent;
+      if (lastTarget === 'subject') {
+        insertAtCursor(subjectInput, token);
+      } else {
+        const range = quill.getSelection(true) || { index: quill.getLength(), length: 0 };
+        quill.insertText(range.index, token);
+        quill.setSelection(range.index + token.length, 0);
+      }
+    });
+  });
+
+  function insertAtCursor(textarea, text) {
+    if (!textarea) return;
+    const start = textarea.selectionStart || 0;
+    const end = textarea.selectionEnd || 0;
+    textarea.value = textarea.value.slice(0, start) + text + textarea.value.slice(end);
+    textarea.selectionStart = textarea.selectionEnd = start + text.length;
+    textarea.focus();
+  }
+
+  openSettingsBtn &&
+    openSettingsBtn.addEventListener('click', () => {
+      fetch('/api/email-config')
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.success) {
+            subjectInput.value = d.config.subjectTemplate || '';
+            ensureQuill();
+            quill.root.innerHTML = d.config.bodyTemplate || '';
+          }
+        })
+        .catch(() => {});
+      settingsModal.style.display = 'flex';
+    });
+
+  closeSettingsBtn &&
+    closeSettingsBtn.addEventListener('click', () => {
+      settingsModal.style.display = 'none';
+    });
+
+  saveSettingsBtn &&
+    saveSettingsBtn.addEventListener('click', () => {
+      const payload = {
+        subjectTemplate: subjectInput.value,
+        bodyTemplate: quill ? quill.root.innerHTML : '',
+      };
+      fetch('/api/email-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.success) {
+            showNotification('Paramètres enregistrés', 'success');
+            settingsModal.style.display = 'none';
+          } else {
+            showNotification('Erreur enregistrement', 'error');
+          }
+        })
+        .catch(() => showNotification('Erreur réseau', 'error'));
+    });
+
+  /* ---------------------- Sidebar Resizer ---------------------- */
+  const resizer = document.getElementById('sidebarResizer');
+  let isResizing = false;
+  resizer &&
+    resizer.addEventListener('mousedown', () => {
+      isResizing = true;
+      document.body.style.cursor = 'ew-resize';
+    });
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const newWidth = e.clientX;
+    if (newWidth < 240) return; // largeur minimale
+    sidebar.style.width = newWidth + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    if (isResizing) {
+      isResizing = false;
+      document.body.style.cursor = '';
     }
   });
 

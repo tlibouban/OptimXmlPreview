@@ -12,17 +12,13 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # Fichiers de sortie générés
-Output/*.html
-Output/*.htm
-Output/logo.jpg
-Output/logo.png
+Output/
 
 # Fichiers PDF
-pdf/*.pdf
+pdf/
 
 # Fichiers XML
-Data/*.xml
-!Data/exemple.xml
+Data/
 
 # Build et distribution
 dist/
@@ -69,19 +65,6 @@ desktop.ini
 .env.development.local
 .env.test.local
 .env.production.local
-
-# Tests et couverture
-jest-html-reporters-attach/
-test-results/
-playwright-report/
-
-# Données de test personnelles (garder les exemples)
-Data/*.xml
-!Data/exemple.xml
-
-# Documentation générée
-docs/
-jsdoc-output/
 
 # Backup et fichiers de sauvegarde
 *.bak
