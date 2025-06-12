@@ -577,6 +577,22 @@
         font-size: 0.875rem;
         pointer-events: none;
       }
+
+      /* Select-All Row */
+      .select-all-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        color: #e5e7eb;
+        font-size: 0.875rem;
+      }
+      .select-all-row input[type='checkbox'] {
+        width: 1rem;
+        height: 1rem;
+        accent-color: #3b82f6;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -609,6 +625,10 @@
             <div class="search-box">
               <i class="fas fa-search"></i>
               <input type="text" id="searchInput" placeholder="Rechercher..." />
+            </div>
+            <div class="select-all-row">
+              <input type="checkbox" id="selectAll" />
+              <label for="selectAll">Tout sélectionner</label>
             </div>
           </div>
           <div class="email-list" id="emailList">
@@ -3106,10 +3126,14 @@
 
         const checkboxes = document.querySelectorAll('.email-select');
         const sendSelectedButton = document.getElementById('sendSelectedButton');
+        const selectAllCheckbox = document.getElementById('selectAll');
 
         function updateSelected() {
           const any = Array.from(checkboxes).some((cb) => cb.checked);
           sendSelectedButton.disabled = !any;
+          if (selectAllCheckbox) {
+            selectAllCheckbox.checked = Array.from(checkboxes).every((cb) => cb.checked);
+          }
         }
 
         checkboxes.forEach((cb) => {
@@ -3343,6 +3367,15 @@
             document.body.style.cursor = '';
           }
         });
+
+        /* ---- Select-All checkbox logic ---- */
+        if (selectAllCheckbox) {
+          selectAllCheckbox.addEventListener('change', () => {
+            const checked = selectAllCheckbox.checked;
+            checkboxes.forEach((cb) => (cb.checked = checked));
+            updateSelected();
+          });
+        }
       });
     </script>
   </body>
