@@ -115,9 +115,7 @@
 
       /* Sidebar */
       .sidebar {
-        width: 38rem; /* 608px */
-        resize: horizontal;
-        overflow: auto;
+        width: 400px;
         background: #141325;
         color: white;
         border-right: 1px solid #1e1b4b;
@@ -281,9 +279,9 @@
         font-size: 0.875rem;
         color: inherit;
         margin-bottom: 0.25rem;
-        white-space: normal;
-        overflow: visible;
-        text-overflow: initial;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -477,22 +475,6 @@
         transform: none !important;
       }
 
-      /* Ajout styles Drag&Drop */
-      .sidebar.drop-target {
-        outline: 2px dashed #3b82f6;
-        position: relative;
-      }
-      .sidebar.drop-target::after {
-        content: 'Déposez vos fichiers XML ici';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: #3b82f6;
-        font-size: 0.875rem;
-        pointer-events: none;
-      }
-
       /* Settings Button */
       .settings-button {
         background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
@@ -504,7 +486,6 @@
         transition: all 0.2s ease;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
-
       .settings-button:hover {
         background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
         transform: translateY(-1px);
@@ -523,27 +504,20 @@
         justify-content: center;
         z-index: 200;
       }
-
       .modal {
         background: #fff;
         border-radius: 0.5rem;
         padding: 1.5rem;
-        width: 800px; /* doubled */
+        width: 800px;
         max-width: 95%;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         display: flex;
         flex-direction: column;
         gap: 1rem;
       }
-
-      .modal h3 {
-        margin: 0;
-        font-size: 1.125rem;
-      }
-
       .modal textarea {
         width: 100%;
-        height: 80px; /* increased */
+        height: 80px;
         padding: 0.5rem;
         border: 1px solid #d1d5db;
         border-radius: 0.375rem;
@@ -551,13 +525,11 @@
         font-family: inherit;
         font-size: 0.875rem;
       }
-
       .modal .token-list {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
       }
-
       .modal .token {
         background: #e5e7eb;
         color: #111827;
@@ -566,26 +538,15 @@
         cursor: pointer;
         font-size: 0.75rem;
       }
-
       .modal .actions {
         display: flex;
         justify-content: flex-end;
         gap: 0.5rem;
       }
-
-      .modal button {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        cursor: pointer;
-      }
-
       .modal .save-btn {
         background: #059669;
         color: #fff;
       }
-
       .modal .close-btn {
         background: #6b7280;
         color: #fff;
@@ -600,6 +561,22 @@
       .resizer:hover {
         background: #374151;
       }
+
+      /* Drag & Drop */
+      .sidebar.drop-target {
+        outline: 2px dashed #3b82f6;
+        position: relative;
+      }
+      .sidebar.drop-target::after {
+        content: 'Déposez vos fichiers XML ici';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #3b82f6;
+        font-size: 0.875rem;
+        pointer-events: none;
+      }
     </style>
   </head>
   <body>
@@ -609,7 +586,7 @@
         <div class="header-content">
           <i class="fas fa-envelope-open-text header-icon"></i>
           <h1>OptimXmlPreview</h1>
-          <button id="convertButton" class="convert-button">
+          <button class="convert-button" id="convertButton">
             <i class="fas fa-sync-alt"></i>
             Convertir nouveaux emails
           </button>
@@ -620,13 +597,13 @@
             <i class="fas fa-paper-plane"></i>
             Envoyer sélection
           </button>
-          <span class="email-count">1 nouveaux / 69 emails</span>
+          <span class="email-count">59 nouveaux / 69 emails</span>
         </div>
       </div>
 
       <div class="main-content">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
+        <aside class="sidebar">
           <div class="sidebar-header">
             <h2><i class="fas fa-list"></i> Emails convertis</h2>
             <div class="search-box">
@@ -636,13 +613,13 @@
           </div>
           <div class="email-list" id="emailList">
             <div class="email-section-header">
-              <h3><i class="fas fa-plus-circle"></i> Nouveaux emails (1)</h3>
+              <h3><i class="fas fa-plus-circle"></i> Nouveaux emails (59)</h3>
             </div>
 
             <div
               class="email-item recent"
-              data-file="Output/20250321 14_26_00 Mise Ã  disposition [20 03766] 21 03 2025  EPI  Echanges entre parties pour information.html"
-              data-pdf="pdf/20250321 14_26_00 Mise Ã  disposition [20 03766] 21 03 2025  EPI  Echanges entre parties pour information.pdf"
+              data-file="Output/20250325 15_22_00 Plaidoirie [25 00326] 26 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
+              data-pdf="pdf/20250325 15_22_00 Plaidoirie [25 00326] 26 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
               data-index="0"
             >
               <input type="checkbox" class="email-select" />
@@ -651,7 +628,1747 @@
               </div>
               <div class="email-info">
                 <div class="email-title">
-                  20250321 14_26_00 Mise Ã disposition [20 03766] 2...
+                  20250325 15_22_00 Plaidoirie [25 00326] 26 03 2025...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 16_09_00 M E E  [22 02789] 26 03 2025  CMAG  Courrier au magistrat.html"
+              data-pdf="pdf/20250325 16_09_00 M E E  [22 02789] 26 03 2025  CMAG  Courrier au magistrat.pdf"
+              data-index="1"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 16_09_00 M E E [22 02789] 26 03 2025 CM...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 15_12_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
+              data-pdf="pdf/20250325 15_12_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
+              data-index="2"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 15_12_00 Re IREF Projet d assignation...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 15_28_00 Accusé de réception   M E E  [23 08289] 27 02 2025  CRPV  Conclusions ci-jointes par RPVA.html"
+              data-pdf="pdf/20250325 15_28_00 Accusé de réception   M E E  [23 08289] 27 02 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
+              data-index="3"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 15_28_00 Accusé de réception M E E [23...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 14_54_00 Mise à disposition [16 14635] 14 03 2025 notification de décision à avocat.html"
+              data-pdf="pdf/20250325 14_54_00 Mise à disposition [16 14635] 14 03 2025 notification de décision à avocat.pdf"
+              data-index="4"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 14_54_00 Mise à disposition [16 14635] 14...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 15_03_00 M E E  [22 00862] 22 04 2025  CLI  Conclusions 1.html"
+              data-pdf="pdf/20250325 15_03_00 M E E  [22 00862] 22 04 2025  CLI  Conclusions 1.pdf"
+              data-index="5"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 15_03_00 M E E [22 00862] 22 04 2025 CL...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 14_43_00 Plaidoirie [24 08241] 26 03 2025  CLI  Conclusions 1.html"
+              data-pdf="pdf/20250325 14_43_00 Plaidoirie [24 08241] 26 03 2025  CLI  Conclusions 1.pdf"
+              data-index="6"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 14_43_00 Plaidoirie [24 08241] 26 03 2025...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 14_57_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
+              data-pdf="pdf/20250325 14_57_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
+              data-index="7"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 14_57_00 Re IREF Projet d assignation...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 14_38_00 Accusé de réception   Prononcé [23 06718] 25 03 2025 notification de décision à avocat.html"
+              data-pdf="pdf/20250325 14_38_00 Accusé de réception   Prononcé [23 06718] 25 03 2025 notification de décision à avocat.pdf"
+              data-index="8"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 14_38_00 Accusé de réception Prononcé [...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 14_16_00 Incident [24 05843] 02 04 2025  CINC  Conclusions d incident.html"
+              data-pdf="pdf/20250325 14_16_00 Incident [24 05843] 02 04 2025  CINC  Conclusions d incident.pdf"
+              data-index="9"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 14_16_00 Incident [24 05843] 02 04 2025 ...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 14_09_00  CDEF  Constitution en défense de Maître PETIT-SCHMITTER n° CNBF   028801.html"
+              data-pdf="pdf/20250325 14_09_00  CDEF  Constitution en défense de Maître PETIT-SCHMITTER n° CNBF   028801.pdf"
+              data-index="10"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 14_09_00 CDEF Constitution en défense d...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 14_27_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230_1.html"
+              data-pdf="pdf/20250325 14_27_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230_1.pdf"
+              data-index="11"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 14_27_00 Re IREF Projet d assignation...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 14_19_00 M E E  [22 02789] 26 03 2025  DRV  Demande de renvoi.html"
+              data-pdf="pdf/20250325 14_19_00 M E E  [22 02789] 26 03 2025  DRV  Demande de renvoi.pdf"
+              data-index="12"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 14_19_00 M E E [22 02789] 26 03 2025 DR...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 14_27_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
+              data-pdf="pdf/20250325 14_27_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
+              data-index="13"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 14_27_00 Re IREF Projet d assignation...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 12_13_00 Plaidoirie [25 01171] 14 05 2025  SCOM  Sommation de communiquer les pièces.html"
+              data-pdf="pdf/20250325 12_13_00 Plaidoirie [25 01171] 14 05 2025  SCOM  Sommation de communiquer les pièces.pdf"
+              data-index="14"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 12_13_00 Plaidoirie [25 01171] 14 05 2025...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 12_12_00 Re   Plaidoirie [25 00096] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.html"
+              data-pdf="pdf/20250325 12_12_00 Re   Plaidoirie [25 00096] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.pdf"
+              data-index="15"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 12_12_00 Re Plaidoirie [25 00096] 26 03...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 11_55_00 Accusé de réception   Plaidoirie [25 00096] 25 03 2025 communications de pièces.html"
+              data-pdf="pdf/20250325 11_55_00 Accusé de réception   Plaidoirie [25 00096] 25 03 2025 communications de pièces.pdf"
+              data-index="16"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 11_55_00 Accusé de réception Plaidoirie...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 11_57_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
+              data-pdf="pdf/20250325 11_57_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
+              data-index="17"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 11_57_00 Re IREF Projet d assignation...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 12_12_00  Demandeur   Domenico MALARA.html"
+              data-pdf="pdf/20250325 12_12_00  Demandeur   Domenico MALARA.pdf"
+              data-index="18"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 12_12_00 Demandeur Domenico MALARA
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 10_45_00 Autre [24 01773] 25 03 2025 notification de décision à avocat.html"
+              data-pdf="pdf/20250325 10_45_00 Autre [24 01773] 25 03 2025 notification de décision à avocat.pdf"
+              data-index="19"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 10_45_00 Autre [24 01773] 25 03 2025 noti...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 11_09_00 Mise en état [22 11203] 25 03 2025  SCOM  Transmission sommation de communiquer.html"
+              data-pdf="pdf/20250325 11_09_00 Mise en état [22 11203] 25 03 2025  SCOM  Transmission sommation de communiquer.pdf"
+              data-index="20"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 11_09_00 Mise en état [22 11203] 25 03 20...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 11_08_00 Mise en état [22 10538] 25 03 2025  SCOM  Transmission sommation de communiquer.html"
+              data-pdf="pdf/20250325 11_08_00 Mise en état [22 10538] 25 03 2025  SCOM  Transmission sommation de communiquer.pdf"
+              data-index="21"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 11_08_00 Mise en état [22 10538] 25 03 20...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 10_57_00 Re   Plaidoirie [25 00326] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.html"
+              data-pdf="pdf/20250325 10_57_00 Re   Plaidoirie [25 00326] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.pdf"
+              data-index="22"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 10_57_00 Re Plaidoirie [25 00326] 26 03...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 10_38_00 Accusé de réception   Plaidoirie [25 00326] 25 03 2025 communications de pièces.html"
+              data-pdf="pdf/20250325 10_38_00 Accusé de réception   Plaidoirie [25 00326] 25 03 2025 communications de pièces.pdf"
+              data-index="23"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 10_38_00 Accusé de réception Plaidoirie...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 10_12_00 Plaidoirie [19 01665] 25 03 2025 notification de contestation du projet de répartition.html"
+              data-pdf="pdf/20250325 10_12_00 Plaidoirie [19 01665] 25 03 2025 notification de contestation du projet de répartition.pdf"
+              data-index="24"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 10_12_00 Plaidoirie [19 01665] 25 03 2025...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 10_32_00 Plaidoirie [25 00096] 26 03 2025 communications de pièces.html"
+              data-pdf="pdf/20250325 10_32_00 Plaidoirie [25 00096] 26 03 2025 communications de pièces.pdf"
+              data-index="25"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 10_32_00 Plaidoirie [25 00096] 26 03 2025...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 10_12_00 Plaidoirie [19 01665] 04 04 2025  CBCP  Conclusions + BCP ci-joints par RPVA.html"
+              data-pdf="pdf/20250325 10_12_00 Plaidoirie [19 01665] 04 04 2025  CBCP  Conclusions + BCP ci-joints par RPVA.pdf"
+              data-index="26"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 10_12_00 Plaidoirie [19 01665] 04 04 2025...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 10_10_00 M E E  [20 06082] 19 05 2025  INCI  Demande de fixation incident de mise en état.html"
+              data-pdf="pdf/20250325 10_10_00 M E E  [20 06082] 19 05 2025  INCI  Demande de fixation incident de mise en état.pdf"
+              data-index="27"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 10_10_00 M E E [20 06082] 19 05 2025 IN...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 09_46_00 Accusé de réception   Prononcé [24 03216] 25 03 2025 notification de décision à avocat.html"
+              data-pdf="pdf/20250325 09_46_00 Accusé de réception   Prononcé [24 03216] 25 03 2025 notification de décision à avocat.pdf"
+              data-index="28"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 09_46_00 Accusé de réception Prononcé [...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 14_02_00 Mise à disposition [16 14635] 24 03 2025 notification de décision à avocat.html"
+              data-pdf="pdf/20250324 14_02_00 Mise à disposition [16 14635] 24 03 2025 notification de décision à avocat.pdf"
+              data-index="29"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 14_02_00 Mise à disposition [16 14635] 24...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 15_57_00  incident mise en état  - Chambre 1 -  [N° RG 23 08187 - N° Portalis DB3D-W-B7H-KBHC].html"
+              data-pdf="pdf/20250324 15_57_00  incident mise en état  - Chambre 1 -  [N° RG 23 08187 - N° Portalis DB3D-W-B7H-KBHC].pdf"
+              data-index="30"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 15_57_00 incident mise en état - Chambr...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250325 09_32_00 M E E  [24 04866] 19 05 2025  RME  Demande de renvoi à la mise en état.html"
+              data-pdf="pdf/20250325 09_32_00 M E E  [24 04866] 19 05 2025  RME  Demande de renvoi à la mise en état.pdf"
+              data-index="31"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250325 09_32_00 M E E [24 04866] 19 05 2025 RM...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 17_10_00 M E E  [24 00255] 01-04-2025  CONC  Conclusions au Fond.html"
+              data-pdf="pdf/20250324 17_10_00 M E E  [24 00255] 01-04-2025  CONC  Conclusions au Fond.pdf"
+              data-index="32"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 17_10_00 M E E [24 00255] 01-04-2025 CO...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 14_51_00  CDEF  Constitution en défense de Maître DREVET n° CNBF   007350.html"
+              data-pdf="pdf/20250324 14_51_00  CDEF  Constitution en défense de Maître DREVET n° CNBF   007350.pdf"
+              data-index="33"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 14_51_00 CDEF Constitution en défense d...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 14_00_00 M E E  [23 01235] 06 05 2025  CRPV  Conclusions ci-jointes par RPVA.html"
+              data-pdf="pdf/20250324 14_00_00 M E E  [23 01235] 06 05 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
+              data-index="34"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 14_00_00 M E E [23 01235] 06 05 2025 CR...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 13_58_00 M E E  [23 01162] 06 05 2025  CRPV  Conclusions ci-jointes par RPVA.html"
+              data-pdf="pdf/20250324 13_58_00 M E E  [23 01162] 06 05 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
+              data-index="35"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 13_58_00 M E E [23 01162] 06 05 2025 CR...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 13_42_00 Re   Plaidoirie [24 06091] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.html"
+              data-pdf="pdf/20250324 13_42_00 Re   Plaidoirie [24 06091] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.pdf"
+              data-index="36"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 13_42_00 Re Plaidoirie [24 06091] 26 03...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 12_43_00 Accusé de réception   Prononcé [17 08324] 24 03 2025 notification de décision à avocat.html"
+              data-pdf="pdf/20250324 12_43_00 Accusé de réception   Prononcé [17 08324] 24 03 2025 notification de décision à avocat.pdf"
+              data-index="37"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 12_43_00 Accusé de réception Prononcé [...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 12_31_00 Accusé de réception   Prononcé [21 07549] 24 03 2025 notification de décision à avocat.html"
+              data-pdf="pdf/20250324 12_31_00 Accusé de réception   Prononcé [21 07549] 24 03 2025 notification de décision à avocat.pdf"
+              data-index="38"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 12_31_00 Accusé de réception Prononcé [...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 12_19_00 Accusé de réception   Plaidoirie [24 06091] 24 03 2025 communications de pièces.html"
+              data-pdf="pdf/20250324 12_19_00 Accusé de réception   Plaidoirie [24 06091] 24 03 2025 communications de pièces.pdf"
+              data-index="39"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 12_19_00 Accusé de réception Plaidoirie...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 09_43_00 M E E  [24 00370] 27 03 2025  RME  Demande de renvoi à la mise en état.html"
+              data-pdf="pdf/20250324 09_43_00 M E E  [24 00370] 27 03 2025  RME  Demande de renvoi à la mise en état.pdf"
+              data-index="40"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 09_43_00 M E E [24 00370] 27 03 2025 RM...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 11_30_00 Dépôt de dossier [24 06313] 24 03 2025  CIG  Courriel d information au greffe.html"
+              data-pdf="pdf/20250324 11_30_00 Dépôt de dossier [24 06313] 24 03 2025  CIG  Courriel d information au greffe.pdf"
+              data-index="41"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 11_30_00 Dépôt de dossier [24 06313] 24 0...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 09_16_00 M E E  [25 01673] 24 03 2025  CONS  Constitution par RPVA.html"
+              data-pdf="pdf/20250324 09_16_00 M E E  [25 01673] 24 03 2025  CONS  Constitution par RPVA.pdf"
+              data-index="42"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 09_16_00 M E E [25 01673] 24 03 2025 CO...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 09_19_00 Incident [23 08305] 28 04 2025  CRPV  Conclusions ci-jointes par RPVA.html"
+              data-pdf="pdf/20250324 09_19_00 Incident [23 08305] 28 04 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
+              data-index="43"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 09_19_00 Incident [23 08305] 28 04 2025 ...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250322 14_56_00 Plaidoirie [25 01616] 26 03 2025 communications de pièces.html"
+              data-pdf="pdf/20250322 14_56_00 Plaidoirie [25 01616] 26 03 2025 communications de pièces.pdf"
+              data-index="44"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250322 14_56_00 Plaidoirie [25 01616] 26 03 2025...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250322 15_04_00 Plaidoirie [25 01616] 26 03 2025 communications de pièces.html"
+              data-pdf="pdf/20250322 15_04_00 Plaidoirie [25 01616] 26 03 2025 communications de pièces.pdf"
+              data-index="45"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250322 15_04_00 Plaidoirie [25 01616] 26 03 2025...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 22_33_00 Re  Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
+              data-pdf="pdf/20250321 22_33_00 Re  Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
+              data-index="46"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 22_33_00 Re Incident [23 02846] 24 03 20...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250324 08_22_00 Orientation [24 09622] 25 03 2025  RME  Demande de renvoi à la mise en état.html"
+              data-pdf="pdf/20250324 08_22_00 Orientation [24 09622] 25 03 2025  RME  Demande de renvoi à la mise en état.pdf"
+              data-index="47"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250324 08_22_00 Orientation [24 09622] 25 03 202...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250323 16_18_00 Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
+              data-pdf="pdf/20250323 16_18_00 Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
+              data-index="48"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250323 16_18_00 Incident [23 02846] 24 03 2025 ...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 17_47_00 M E E  [24 00079] 19 02 2025 communications de pièces.html"
+              data-pdf="pdf/20250321 17_47_00 M E E  [24 00079] 19 02 2025 communications de pièces.pdf"
+              data-index="49"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 17_47_00 M E E [24 00079] 19 02 2025 com...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 22_30_00 Incident [23 02846] 24 03 2025  CLI  Conclusions 1.html"
+              data-pdf="pdf/20250321 22_30_00 Incident [23 02846] 24 03 2025  CLI  Conclusions 1.pdf"
+              data-index="50"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 22_30_00 Incident [23 02846] 24 03 2025 ...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 17_46_00 M E E  [24 00079] 19 02 2025  CBCP  Conclusions + BCP ci-joints par RPVA.html"
+              data-pdf="pdf/20250321 17_46_00 M E E  [24 00079] 19 02 2025  CBCP  Conclusions + BCP ci-joints par RPVA.pdf"
+              data-index="51"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 17_46_00 M E E [24 00079] 19 02 2025 CB...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 17_48_00 Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
+              data-pdf="pdf/20250321 17_48_00 Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
+              data-index="52"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 17_48_00 Incident [23 02846] 24 03 2025 ...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 17_56_00  CDEF  Constitution en défense de Maître LATAPIE n° CNBF   096546.html"
+              data-pdf="pdf/20250321 17_56_00  CDEF  Constitution en défense de Maître LATAPIE n° CNBF   096546.pdf"
+              data-index="53"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 17_56_00 CDEF Constitution en défense d...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 09_57_00 Incident [15 01319] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
+              data-pdf="pdf/20250321 09_57_00 Incident [15 01319] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
+              data-index="54"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 09_57_00 Incident [15 01319] 24 03 2025 ...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 14_26_00 Mise à disposition [20 03766] 21 03 2025  EPI  Echanges entre parties pour information.html"
+              data-pdf="pdf/20250321 14_26_00 Mise à disposition [20 03766] 21 03 2025  EPI  Echanges entre parties pour information.pdf"
+              data-index="55"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 14_26_00 Mise à disposition [20 03766] 21...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 17_12_00 Re   Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes parRPVA.html"
+              data-pdf="pdf/20250321 17_12_00 Re   Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes parRPVA.pdf"
+              data-index="56"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 17_12_00 Re Incident [23 02846] 24 03 2...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 17_12_00 Re   Incident [24 00472] 24 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.html"
+              data-pdf="pdf/20250321 17_12_00 Re   Incident [24 00472] 24 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.pdf"
+              data-index="57"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 17_12_00 Re Incident [24 00472] 24 03 2...
+                  <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
+                </div>
+                <div class="email-meta">
+                  <span class="file-size">~5KB</span>
+                  <span class="file-date">12/06/2025</span>
+                </div>
+              </div>
+              <div class="email-actions">
+                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
+                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
+                <i
+                  class="fas fa-external-link-alt open-html"
+                  title="Ouvrir dans un nouvel onglet"
+                ></i>
+              </div>
+            </div>
+
+            <div
+              class="email-item recent"
+              data-file="Output/20250321 17_26_00 Accusé de réception    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
+              data-pdf="pdf/20250321 17_26_00 Accusé de réception    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
+              data-index="58"
+            >
+              <input type="checkbox" class="email-select" />
+              <div class="email-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="email-info">
+                <div class="email-title">
+                  20250321 17_26_00 Accusé de réception IREF Pro...
                   <i class="fas fa-star recent-star" title="Nouveau fichier"></i>
                 </div>
                 <div class="email-meta">
@@ -670,1579 +2387,13 @@
             </div>
 
             <div class="email-section-header">
-              <h3><i class="fas fa-archive"></i> Emails précédents (68)</h3>
+              <h3><i class="fas fa-archive"></i> Emails précédents (10)</h3>
             </div>
 
             <div
               class="email-item"
-              data-file="Output/20250321 09_57_00 Incident [15 01319] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
-              data-pdf="pdf/20250321 09_57_00 Incident [15 01319] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
-              data-index="1"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 09_57_00 Incident [15 01319] 24 03 2025 ...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 15_22_00 Plaidoirie [25 00326] 26 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
-              data-pdf="pdf/20250325 15_22_00 Plaidoirie [25 00326] 26 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
-              data-index="2"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 15_22_00 Plaidoirie [25 00326] 26 03 2025...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 15_12_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
-              data-pdf="pdf/20250325 15_12_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
-              data-index="3"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 15_12_00 Re IREF Projet d assignation...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 15_28_00 Accusé de réception   M E E  [23 08289] 27 02 2025  CRPV  Conclusions ci-jointes par RPVA.html"
-              data-pdf="pdf/20250325 15_28_00 Accusé de réception   M E E  [23 08289] 27 02 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
-              data-index="4"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 15_28_00 Accusé de réception M E E [23...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 16_09_00 M E E  [22 02789] 26 03 2025  CMAG  Courrier au magistrat.html"
-              data-pdf="pdf/20250325 16_09_00 M E E  [22 02789] 26 03 2025  CMAG  Courrier au magistrat.pdf"
-              data-index="5"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 16_09_00 M E E [22 02789] 26 03 2025 CM...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 14_54_00 Mise à disposition [16 14635] 14 03 2025 notification de décision à avocat.html"
-              data-pdf="pdf/20250325 14_54_00 Mise à disposition [16 14635] 14 03 2025 notification de décision à avocat.pdf"
-              data-index="6"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 14_54_00 Mise à disposition [16 14635] 14...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 15_03_00 M E E  [22 00862] 22 04 2025  CLI  Conclusions 1.html"
-              data-pdf="pdf/20250325 15_03_00 M E E  [22 00862] 22 04 2025  CLI  Conclusions 1.pdf"
-              data-index="7"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 15_03_00 M E E [22 00862] 22 04 2025 CL...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 14_43_00 Plaidoirie [24 08241] 26 03 2025  CLI  Conclusions 1.html"
-              data-pdf="pdf/20250325 14_43_00 Plaidoirie [24 08241] 26 03 2025  CLI  Conclusions 1.pdf"
-              data-index="8"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 14_43_00 Plaidoirie [24 08241] 26 03 2025...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 14_38_00 Accusé de réception   Prononcé [23 06718] 25 03 2025 notification de décision à avocat.html"
-              data-pdf="pdf/20250325 14_38_00 Accusé de réception   Prononcé [23 06718] 25 03 2025 notification de décision à avocat.pdf"
-              data-index="9"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 14_38_00 Accusé de réception Prononcé [...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 14_57_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
-              data-pdf="pdf/20250325 14_57_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
-              data-index="10"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 14_57_00 Re IREF Projet d assignation...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 14_16_00 Incident [24 05843] 02 04 2025  CINC  Conclusions d incident.html"
-              data-pdf="pdf/20250325 14_16_00 Incident [24 05843] 02 04 2025  CINC  Conclusions d incident.pdf"
-              data-index="11"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 14_16_00 Incident [24 05843] 02 04 2025 ...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 14_09_00  CDEF  Constitution en défense de Maître PETIT-SCHMITTER n° CNBF   028801.html"
-              data-pdf="pdf/20250325 14_09_00  CDEF  Constitution en défense de Maître PETIT-SCHMITTER n° CNBF   028801.pdf"
-              data-index="12"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 14_09_00 CDEF Constitution en défense d...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 14_27_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
-              data-pdf="pdf/20250325 14_27_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
-              data-index="13"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 14_27_00 Re IREF Projet d assignation...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 14_27_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230_1.html"
-              data-pdf="pdf/20250325 14_27_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230_1.pdf"
-              data-index="14"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 14_27_00 Re IREF Projet d assignation...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 14_19_00 M E E  [22 02789] 26 03 2025  DRV  Demande de renvoi.html"
-              data-pdf="pdf/20250325 14_19_00 M E E  [22 02789] 26 03 2025  DRV  Demande de renvoi.pdf"
-              data-index="15"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 14_19_00 M E E [22 02789] 26 03 2025 DR...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 12_12_00  Demandeur   Domenico MALARA.html"
-              data-pdf="pdf/20250325 12_12_00  Demandeur   Domenico MALARA.pdf"
-              data-index="16"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 12_12_00 Demandeur Domenico MALARA</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 12_13_00 Plaidoirie [25 01171] 14 05 2025  SCOM  Sommation de communiquer les pièces.html"
-              data-pdf="pdf/20250325 12_13_00 Plaidoirie [25 01171] 14 05 2025  SCOM  Sommation de communiquer les pièces.pdf"
-              data-index="17"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 12_13_00 Plaidoirie [25 01171] 14 05 2025...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 11_55_00 Accusé de réception   Plaidoirie [25 00096] 25 03 2025 communications de pièces.html"
-              data-pdf="pdf/20250325 11_55_00 Accusé de réception   Plaidoirie [25 00096] 25 03 2025 communications de pièces.pdf"
-              data-index="18"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 11_55_00 Accusé de réception Plaidoirie...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 11_57_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
-              data-pdf="pdf/20250325 11_57_00 Re    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
-              data-index="19"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 11_57_00 Re IREF Projet d assignation...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 12_12_00 Re   Plaidoirie [25 00096] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.html"
-              data-pdf="pdf/20250325 12_12_00 Re   Plaidoirie [25 00096] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.pdf"
-              data-index="20"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 12_12_00 Re Plaidoirie [25 00096] 26 03...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 10_45_00 Autre [24 01773] 25 03 2025 notification de décision à avocat.html"
-              data-pdf="pdf/20250325 10_45_00 Autre [24 01773] 25 03 2025 notification de décision à avocat.pdf"
-              data-index="21"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 10_45_00 Autre [24 01773] 25 03 2025 noti...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 11_09_00 Mise en état [22 11203] 25 03 2025  SCOM  Transmission sommation de communiquer.html"
-              data-pdf="pdf/20250325 11_09_00 Mise en état [22 11203] 25 03 2025  SCOM  Transmission sommation de communiquer.pdf"
-              data-index="22"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 11_09_00 Mise en état [22 11203] 25 03 20...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 11_08_00 Mise en état [22 10538] 25 03 2025  SCOM  Transmission sommation de communiquer.html"
-              data-pdf="pdf/20250325 11_08_00 Mise en état [22 10538] 25 03 2025  SCOM  Transmission sommation de communiquer.pdf"
-              data-index="23"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 11_08_00 Mise en état [22 10538] 25 03 20...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 10_57_00 Re   Plaidoirie [25 00326] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.html"
-              data-pdf="pdf/20250325 10_57_00 Re   Plaidoirie [25 00326] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.pdf"
-              data-index="24"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 10_57_00 Re Plaidoirie [25 00326] 26 03...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 10_38_00 Accusé de réception   Plaidoirie [25 00326] 25 03 2025 communications de pièces.html"
-              data-pdf="pdf/20250325 10_38_00 Accusé de réception   Plaidoirie [25 00326] 25 03 2025 communications de pièces.pdf"
-              data-index="25"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 10_38_00 Accusé de réception Plaidoirie...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 10_12_00 Plaidoirie [19 01665] 04 04 2025  CBCP  Conclusions + BCP ci-joints par RPVA.html"
-              data-pdf="pdf/20250325 10_12_00 Plaidoirie [19 01665] 04 04 2025  CBCP  Conclusions + BCP ci-joints par RPVA.pdf"
-              data-index="26"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 10_12_00 Plaidoirie [19 01665] 04 04 2025...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 10_12_00 Plaidoirie [19 01665] 25 03 2025 notification de contestation du projet de répartition.html"
-              data-pdf="pdf/20250325 10_12_00 Plaidoirie [19 01665] 25 03 2025 notification de contestation du projet de répartition.pdf"
-              data-index="27"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 10_12_00 Plaidoirie [19 01665] 25 03 2025...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 10_32_00 Plaidoirie [25 00096] 26 03 2025 communications de pièces.html"
-              data-pdf="pdf/20250325 10_32_00 Plaidoirie [25 00096] 26 03 2025 communications de pièces.pdf"
-              data-index="28"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 10_32_00 Plaidoirie [25 00096] 26 03 2025...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 10_10_00 M E E  [20 06082] 19 05 2025  INCI  Demande de fixation incident de mise en état.html"
-              data-pdf="pdf/20250325 10_10_00 M E E  [20 06082] 19 05 2025  INCI  Demande de fixation incident de mise en état.pdf"
-              data-index="29"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 10_10_00 M E E [20 06082] 19 05 2025 IN...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 09_46_00 Accusé de réception   Prononcé [24 03216] 25 03 2025 notification de décision à avocat.html"
-              data-pdf="pdf/20250325 09_46_00 Accusé de réception   Prononcé [24 03216] 25 03 2025 notification de décision à avocat.pdf"
-              data-index="30"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 09_46_00 Accusé de réception Prononcé [...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 14_02_00 Mise à disposition [16 14635] 24 03 2025 notification de décision à avocat.html"
-              data-pdf="pdf/20250324 14_02_00 Mise à disposition [16 14635] 24 03 2025 notification de décision à avocat.pdf"
-              data-index="31"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 14_02_00 Mise à disposition [16 14635] 24...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 14_51_00  CDEF  Constitution en défense de Maître DREVET n° CNBF   007350.html"
-              data-pdf="pdf/20250324 14_51_00  CDEF  Constitution en défense de Maître DREVET n° CNBF   007350.pdf"
-              data-index="32"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 14_51_00 CDEF Constitution en défense d...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250325 09_32_00 M E E  [24 04866] 19 05 2025  RME  Demande de renvoi à la mise en état.html"
-              data-pdf="pdf/20250325 09_32_00 M E E  [24 04866] 19 05 2025  RME  Demande de renvoi à la mise en état.pdf"
-              data-index="33"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250325 09_32_00 M E E [24 04866] 19 05 2025 RM...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 17_10_00 M E E  [24 00255] 01-04-2025  CONC  Conclusions au Fond.html"
-              data-pdf="pdf/20250324 17_10_00 M E E  [24 00255] 01-04-2025  CONC  Conclusions au Fond.pdf"
-              data-index="34"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 17_10_00 M E E [24 00255] 01-04-2025 CO...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 15_57_00  incident mise en état  - Chambre 1 -  [N° RG 23 08187 - N° Portalis DB3D-W-B7H-KBHC].html"
-              data-pdf="pdf/20250324 15_57_00  incident mise en état  - Chambre 1 -  [N° RG 23 08187 - N° Portalis DB3D-W-B7H-KBHC].pdf"
-              data-index="35"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 15_57_00 incident mise en état - Chambr...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 14_00_00 M E E  [23 01235] 06 05 2025  CRPV  Conclusions ci-jointes par RPVA.html"
-              data-pdf="pdf/20250324 14_00_00 M E E  [23 01235] 06 05 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
-              data-index="36"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 14_00_00 M E E [23 01235] 06 05 2025 CR...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 13_58_00 M E E  [23 01162] 06 05 2025  CRPV  Conclusions ci-jointes par RPVA.html"
-              data-pdf="pdf/20250324 13_58_00 M E E  [23 01162] 06 05 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
-              data-index="37"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 13_58_00 M E E [23 01162] 06 05 2025 CR...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 12_31_00 Accusé de réception   Prononcé [21 07549] 24 03 2025 notification de décision à avocat.html"
-              data-pdf="pdf/20250324 12_31_00 Accusé de réception   Prononcé [21 07549] 24 03 2025 notification de décision à avocat.pdf"
-              data-index="38"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 12_31_00 Accusé de réception Prononcé [...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 12_43_00 Accusé de réception   Prononcé [17 08324] 24 03 2025 notification de décision à avocat.html"
-              data-pdf="pdf/20250324 12_43_00 Accusé de réception   Prononcé [17 08324] 24 03 2025 notification de décision à avocat.pdf"
-              data-index="39"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 12_43_00 Accusé de réception Prononcé [...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 13_42_00 Re   Plaidoirie [24 06091] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.html"
-              data-pdf="pdf/20250324 13_42_00 Re   Plaidoirie [24 06091] 26 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.pdf"
-              data-index="40"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 13_42_00 Re Plaidoirie [24 06091] 26 03...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 09_16_00 M E E  [25 01673] 24 03 2025  CONS  Constitution par RPVA.html"
-              data-pdf="pdf/20250324 09_16_00 M E E  [25 01673] 24 03 2025  CONS  Constitution par RPVA.pdf"
-              data-index="41"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 09_16_00 M E E [25 01673] 24 03 2025 CO...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 09_19_00 Incident [23 08305] 28 04 2025  CRPV  Conclusions ci-jointes par RPVA.html"
-              data-pdf="pdf/20250324 09_19_00 Incident [23 08305] 28 04 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
-              data-index="42"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 09_19_00 Incident [23 08305] 28 04 2025 ...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 11_30_00 Dépôt de dossier [24 06313] 24 03 2025  CIG  Courriel d information au greffe.html"
-              data-pdf="pdf/20250324 11_30_00 Dépôt de dossier [24 06313] 24 03 2025  CIG  Courriel d information au greffe.pdf"
-              data-index="43"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 11_30_00 Dépôt de dossier [24 06313] 24 0...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 12_19_00 Accusé de réception   Plaidoirie [24 06091] 24 03 2025 communications de pièces.html"
-              data-pdf="pdf/20250324 12_19_00 Accusé de réception   Plaidoirie [24 06091] 24 03 2025 communications de pièces.pdf"
-              data-index="44"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 12_19_00 Accusé de réception Plaidoirie...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 09_43_00 M E E  [24 00370] 27 03 2025  RME  Demande de renvoi à la mise en état.html"
-              data-pdf="pdf/20250324 09_43_00 M E E  [24 00370] 27 03 2025  RME  Demande de renvoi à la mise en état.pdf"
-              data-index="45"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 09_43_00 M E E [24 00370] 27 03 2025 RM...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250322 14_56_00 Plaidoirie [25 01616] 26 03 2025 communications de pièces.html"
-              data-pdf="pdf/20250322 14_56_00 Plaidoirie [25 01616] 26 03 2025 communications de pièces.pdf"
-              data-index="46"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250322 14_56_00 Plaidoirie [25 01616] 26 03 2025...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250322 15_04_00 Plaidoirie [25 01616] 26 03 2025 communications de pièces.html"
-              data-pdf="pdf/20250322 15_04_00 Plaidoirie [25 01616] 26 03 2025 communications de pièces.pdf"
-              data-index="47"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250322 15_04_00 Plaidoirie [25 01616] 26 03 2025...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250323 16_18_00 Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
-              data-pdf="pdf/20250323 16_18_00 Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
-              data-index="48"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250323 16_18_00 Incident [23 02846] 24 03 2025 ...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250324 08_22_00 Orientation [24 09622] 25 03 2025  RME  Demande de renvoi à la mise en état.html"
-              data-pdf="pdf/20250324 08_22_00 Orientation [24 09622] 25 03 2025  RME  Demande de renvoi à la mise en état.pdf"
-              data-index="49"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250324 08_22_00 Orientation [24 09622] 25 03 202...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 22_33_00 Re  Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
-              data-pdf="pdf/20250321 22_33_00 Re  Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
-              data-index="50"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 22_33_00 Re Incident [23 02846] 24 03 20...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 17_47_00 M E E  [24 00079] 19 02 2025 communications de pièces.html"
-              data-pdf="pdf/20250321 17_47_00 M E E  [24 00079] 19 02 2025 communications de pièces.pdf"
-              data-index="51"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 17_47_00 M E E [24 00079] 19 02 2025 com...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 22_30_00 Incident [23 02846] 24 03 2025  CLI  Conclusions 1.html"
-              data-pdf="pdf/20250321 22_30_00 Incident [23 02846] 24 03 2025  CLI  Conclusions 1.pdf"
-              data-index="52"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 22_30_00 Incident [23 02846] 24 03 2025 ...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 17_46_00 M E E  [24 00079] 19 02 2025  CBCP  Conclusions + BCP ci-joints par RPVA.html"
-              data-pdf="pdf/20250321 17_46_00 M E E  [24 00079] 19 02 2025  CBCP  Conclusions + BCP ci-joints par RPVA.pdf"
-              data-index="53"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 17_46_00 M E E [24 00079] 19 02 2025 CB...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 17_48_00 Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.html"
-              data-pdf="pdf/20250321 17_48_00 Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes par RPVA.pdf"
-              data-index="54"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 17_48_00 Incident [23 02846] 24 03 2025 ...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 17_56_00  CDEF  Constitution en défense de Maître LATAPIE n° CNBF   096546.html"
-              data-pdf="pdf/20250321 17_56_00  CDEF  Constitution en défense de Maître LATAPIE n° CNBF   096546.pdf"
-              data-index="55"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 17_56_00 CDEF Constitution en défense d...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 17_26_00 Accusé de réception    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.html"
-              data-pdf="pdf/20250321 17_26_00 Accusé de réception    IREF  Projet d assignation de Maître KERKERIAN n° CNBF   064230.pdf"
-              data-index="56"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 17_26_00 Accusé de réception IREF Pro...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 17_12_00 Re   Incident [24 00472] 24 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.html"
-              data-pdf="pdf/20250321 17_12_00 Re   Incident [24 00472] 24 03 2025  CBCP  Conclusions + BCP ci-jointspar RPVA.pdf"
-              data-index="57"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 17_12_00 Re Incident [24 00472] 24 03 2...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 14_26_00 Mise à disposition [20 03766] 21 03 2025  EPI  Echanges entre parties pour information.html"
-              data-pdf="pdf/20250321 14_26_00 Mise à disposition [20 03766] 21 03 2025  EPI  Echanges entre parties pour information.pdf"
-              data-index="58"
-            >
-              <input type="checkbox" class="email-select" />
-              <div class="email-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="email-info">
-                <div class="email-title">20250321 14_26_00 Mise à disposition [20 03766] 21...</div>
-                <div class="email-meta">
-                  <span class="file-size">~5KB</span>
-                  <span class="file-date">12/06/2025</span>
-                </div>
-              </div>
-              <div class="email-actions">
-                <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>
-                <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>
-                <i
-                  class="fas fa-external-link-alt open-html"
-                  title="Ouvrir dans un nouvel onglet"
-                ></i>
-              </div>
-            </div>
-
-            <div
-              class="email-item"
-              data-file="Output/20250321 17_12_00 Re   Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes parRPVA.html"
-              data-pdf="pdf/20250321 17_12_00 Re   Incident [23 02846] 24 03 2025  CRPV  Conclusions ci-jointes parRPVA.pdf"
+              data-file="Output/20250321 14_26_00 Mise Ã  disposition [20 03766] 21 03 2025  EPI  Echanges entre parties pour information.html"
+              data-pdf="pdf/20250321 14_26_00 Mise Ã  disposition [20 03766] 21 03 2025  EPI  Echanges entre parties pour information.pdf"
               data-index="59"
             >
               <input type="checkbox" class="email-select" />
@@ -2250,7 +2401,7 @@
                 <i class="fas fa-envelope"></i>
               </div>
               <div class="email-info">
-                <div class="email-title">20250321 17_12_00 Re Incident [23 02846] 24 03 2...</div>
+                <div class="email-title">20250321 14_26_00 Mise Ã disposition [20 03766] 2...</div>
                 <div class="email-meta">
                   <span class="file-size">~5KB</span>
                   <span class="file-date">12/06/2025</span>
@@ -2510,6 +2661,7 @@
             </div>
           </div>
         </aside>
+        <div class="resizer" id="sidebarResizer"></div>
 
         <!-- Content Area -->
         <main class="content-area">
@@ -2530,7 +2682,7 @@
 
                 <div class="stat-item">
                   <i class="fas fa-plus-circle"></i>
-                  <span>1 nouveaux fichiers</span>
+                  <span>59 nouveaux fichiers</span>
                 </div>
               </div>
             </div>
@@ -2538,7 +2690,6 @@
           <iframe id="contentFrame" src="" style="display: none"></iframe>
         </main>
       </div>
-      <div class="resizer" id="sidebarResizer"></div>
     </div>
 
     <!-- Settings Modal -->
@@ -3021,7 +3172,6 @@
         if (sidebar && isServerMode) {
           const highlight = () => sidebar.classList.add('drop-target');
           const unHighlight = () => sidebar.classList.remove('drop-target');
-
           ['dragenter', 'dragover'].forEach((evt) => {
             sidebar.addEventListener(evt, (e) => {
               e.preventDefault();
@@ -3034,7 +3184,6 @@
               unHighlight();
             });
           });
-
           sidebar.addEventListener('drop', (e) => {
             e.preventDefault();
             unHighlight();
@@ -3069,23 +3218,24 @@
         const openSettingsBtn = document.getElementById('openSettings');
         const settingsModal = document.getElementById('settingsModal');
         const subjectInput = document.getElementById('subjectTemplateInput');
-        let quill;
         const bodyQuillContainer = document.getElementById('bodyQuill');
         const closeSettingsBtn = document.getElementById('closeSettings');
         const saveSettingsBtn = document.getElementById('saveSettings');
-        const tokens = settingsModal.querySelectorAll('.token');
+        const tokens = settingsModal ? settingsModal.querySelectorAll('.token') : [];
+        let quill;
 
-        // Focus tracking to know where to insert tokens
+        const ensureQuill = () => {
+          if (!quill) {
+            quill = new Quill('#bodyQuill', { theme: 'snow' });
+          }
+        };
+
+        // Focus tracking
         let lastTarget = 'subject';
-        subjectInput.addEventListener('focus', () => {
-          lastTarget = 'subject';
-        });
+        subjectInput && subjectInput.addEventListener('focus', () => (lastTarget = 'subject'));
         ensureQuill();
-        quill.root.addEventListener('focus', () => {
-          lastTarget = 'quill';
-        });
+        quill.root.addEventListener('focus', () => (lastTarget = 'quill'));
 
-        // tokens click handler adjustment
         tokens.forEach((t) => {
           t.addEventListener('click', () => {
             const token = t.textContent;
@@ -3100,6 +3250,7 @@
         });
 
         function insertAtCursor(textarea, text) {
+          if (!textarea) return;
           const start = textarea.selectionStart || 0;
           const end = textarea.selectionEnd || 0;
           textarea.value = textarea.value.slice(0, start) + text + textarea.value.slice(end);
@@ -3107,72 +3258,62 @@
           textarea.focus();
         }
 
-        openSettingsBtn.addEventListener('click', () => {
-          fetch('/api/email-config')
-            .then((r) => r.json())
-            .then((d) => {
-              if (d.success) {
-                subjectInput.value = d.config.subjectTemplate || '';
-                if (!quill) {
-                  quill = new Quill('#bodyQuill', { theme: 'snow' });
+        openSettingsBtn &&
+          openSettingsBtn.addEventListener('click', () => {
+            fetch('/api/email-config')
+              .then((r) => r.json())
+              .then((d) => {
+                if (d.success) {
+                  subjectInput.value = d.config.subjectTemplate || '';
+                  ensureQuill();
+                  quill.root.innerHTML = d.config.bodyTemplate || '';
                 }
-                quill.root.innerHTML = d.config.bodyTemplate || '';
-              }
+              })
+              .catch(() => {});
+            settingsModal.style.display = 'flex';
+          });
+
+        closeSettingsBtn &&
+          closeSettingsBtn.addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+          });
+
+        saveSettingsBtn &&
+          saveSettingsBtn.addEventListener('click', () => {
+            const payload = {
+              subjectTemplate: subjectInput.value,
+              bodyTemplate: quill ? quill.root.innerHTML : '',
+            };
+            fetch('/api/email-config', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
             })
-            .catch(() => {});
-          settingsModal.style.display = 'flex';
-        });
+              .then((r) => r.json())
+              .then((d) => {
+                if (d.success) {
+                  showNotification('Paramètres enregistrés', 'success');
+                  settingsModal.style.display = 'none';
+                } else {
+                  showNotification('Erreur enregistrement', 'error');
+                }
+              })
+              .catch(() => showNotification('Erreur réseau', 'error'));
+          });
 
-        closeSettingsBtn.addEventListener('click', () => {
-          settingsModal.style.display = 'none';
-        });
+        // Drag-n-drop tokens into subject
+        subjectInput && subjectInput.addEventListener('dragover', (e) => e.preventDefault());
+        subjectInput &&
+          subjectInput.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const token = e.dataTransfer.getData('text/plain');
+            if (token) insertAtCursor(subjectInput, token);
+          });
 
-        saveSettingsBtn.addEventListener('click', () => {
-          const payload = {
-            subjectTemplate: subjectInput.value,
-            bodyTemplate: quill ? quill.root.innerHTML : '',
-          };
-          fetch('/api/email-config', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          })
-            .then((r) => r.json())
-            .then((d) => {
-              if (d.success) {
-                showNotification('Paramètres enregistrés', 'success');
-                settingsModal.style.display = 'none';
-              } else {
-                showNotification('Erreur enregistrement', 'error');
-              }
-            })
-            .catch(() => showNotification('Erreur réseau', 'error'));
-        });
-
-        // Enable drop on Objet textarea
-        subjectInput.addEventListener('dragover', (e) => {
-          e.preventDefault();
-        });
-        subjectInput.addEventListener('drop', (e) => {
-          e.preventDefault();
-          const token = e.dataTransfer.getData('text/plain');
-          if (token) insertAtCursor(subjectInput, token);
-        });
-
-        // Enable drop on Quill editor
+        // Drag-n-drop tokens into Quill
         let lastQuillRange = null;
-        function ensureQuill() {
-          if (!quill) {
-            quill = new Quill('#bodyQuill', { theme: 'snow' });
-          }
-        }
-        ensureQuill();
-        quill.on('selection-change', (range) => {
-          if (range) lastQuillRange = range;
-        });
-        bodyQuillContainer.addEventListener('dragover', (e) => {
-          e.preventDefault();
-        });
+        quill.on('selection-change', (range) => (lastQuillRange = range));
+        bodyQuillContainer.addEventListener('dragover', (e) => e.preventDefault());
         bodyQuillContainer.addEventListener('drop', (e) => {
           e.preventDefault();
           const token = e.dataTransfer.getData('text/plain');
@@ -3185,10 +3326,11 @@
         /* -------- Sidebar resizer -------- */
         const resizer = document.getElementById('sidebarResizer');
         let isResizing = false;
-        resizer.addEventListener('mousedown', (e) => {
-          isResizing = true;
-          document.body.style.cursor = 'ew-resize';
-        });
+        resizer &&
+          resizer.addEventListener('mousedown', () => {
+            isResizing = true;
+            document.body.style.cursor = 'ew-resize';
+          });
         document.addEventListener('mousemove', (e) => {
           if (!isResizing) return;
           const newWidth = e.clientX;

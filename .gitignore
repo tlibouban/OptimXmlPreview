@@ -17,6 +17,13 @@ Output/*.htm
 Output/logo.jpg
 Output/logo.png
 
+# Fichiers PDF
+pdf/*.pdf
+
+# Fichiers XML
+Data/*.xml
+!Data/exemple.xml
+
 # Build et distribution
 dist/
 build/
