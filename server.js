@@ -151,10 +151,7 @@ app.get('/', async (req, res) => {
     const { emailHTML, total, recent } = await generateEmailListHTML();
 
     // Remplacer le conteneur de liste d'emails
-    html = html.replace(
-      /<div class="email-list" id="emailList">[\s\S]*?<\/div>/m,
-      `<div class="email-list" id="emailList">${emailHTML}\n</div>`
-    );
+    html = html.replace(/<!--\s*EMAIL_LIST_DYNAMIC_CONTENT\s*-->/, emailHTML);
 
     // Mettre à jour le compteur dans l'en-tête
     html = html.replace(
