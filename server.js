@@ -59,43 +59,112 @@ const upload = multer({
   },
 });
 
-/**
- * Route principale - Sert la page d'index
- */
+// ---------------------------------------------------------------------------
+// Nouvelle fonction utilitaire : génération dynamique de la liste des emails
+// ---------------------------------------------------------------------------
+async function generateEmailListHTML() {
+  const outputDir = path.join(__dirname, 'Output');
+  let emailHTML = '';
+  let total = 0;
+  let recent = 0;
+
+  try {
+    const files = await fs.readdir(outputDir);
+    const htmlFiles = files.filter((f) => f.endsWith('.html') && f !== 'index.html');
+    total = htmlFiles.length;
+
+    const now = Date.now();
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
+
+    // Construire un tableau d'objets contenant les métadonnées nécessaires
+    const infos = await Promise.all(
+      htmlFiles.map(async (file) => {
+        const filePath = path.join(outputDir, file);
+        const stats = await fs.stat(filePath);
+        const isRecent = now - stats.mtimeMs <= sevenDays;
+        if (isRecent) recent++;
+        return { file, stats, isRecent };
+      })
+    );
+
+    // Trier par date de modification décroissante
+    infos.sort((a, b) => b.stats.mtimeMs - a.stats.mtimeMs);
+
+    const buildItem = (info, index) => {
+      const sizeKB = Math.max(1, Math.round(info.stats.size / 1024));
+      const dateStr = new Date(info.stats.mtime).toLocaleDateString('fr-FR');
+      const titleShort = info.file.length > 45 ? info.file.slice(0, 45) + '...' : info.file;
+      const pdfName = info.file.replace(/\.html$/i, '.pdf');
+      const pdfPath = fsSync.existsSync(path.join(__dirname, 'pdf', pdfName))
+        ? `pdf/${pdfName}`
+        : '';
+      const recentStar = info.isRecent
+        ? ' <i class="fas fa-star recent-star" title="Nouveau fichier"></i>'
+        : '';
+      const recentClass = info.isRecent ? ' recent' : '';
+
+      return `\n      <div class="email-item${recentClass}" data-file="Output/${info.file}" data-pdf="${pdfPath}" data-index="${index}">\n        <input type="checkbox" class="email-select" />\n        <div class="email-icon">\n          <i class="fas fa-envelope"></i>\n        </div>\n        <div class="email-info">\n          <div class="email-title">${titleShort}${recentStar}</div>\n          <div class="email-meta">\n            <span class="file-size">~${sizeKB}KB</span>\n            <span class="file-date">${dateStr}</span>\n          </div>\n        </div>\n        <div class="email-actions">\n          <i class="fas fa-file-pdf open-pdf" title="Ouvrir le PDF"></i>\n          <i class="fas fa-paper-plane send-mail" title="Envoyer par email"></i>\n          <i class="fas fa-external-link-alt open-html" title="Ouvrir dans un nouvel onglet"></i>\n        </div>\n      </div>`;
+    };
+
+    const recentItems = infos.filter((i) => i.isRecent);
+    const archivedItems = infos.filter((i) => !i.isRecent);
+
+    if (recentItems.length > 0) {
+      emailHTML += `\n      <div class="email-section-header">\n        <h3><i class="fas fa-plus-circle"></i> Nouveaux emails (${recentItems.length})</h3>\n      </div>`;
+      recentItems.forEach((info, idx) => {
+        emailHTML += buildItem(info, idx);
+      });
+    }
+
+    if (archivedItems.length > 0) {
+      emailHTML += `\n      <div class="email-section-header">\n        <h3><i class="fas fa-archive"></i> Emails archivés (${archivedItems.length})</h3>\n      </div>`;
+      archivedItems.forEach((info, idx) => {
+        emailHTML += buildItem(info, recentItems.length + idx);
+      });
+    }
+  } catch (_) {
+    // Dossier Output manquant ou vide
+  }
+
+  // Message si aucun email
+  if (!emailHTML) {
+    emailHTML =
+      '<div style="padding:1rem; color:#9ca3af;">Aucun email converti pour l\'instant.</div>';
+  }
+
+  return { emailHTML, total, recent };
+}
+// ---------------------------------------------------------------------------
+
+// Remplacement intégral de la route GET '/'
 app.get('/', async (req, res) => {
   try {
-    // Vérifier si index.html existe
-    if (fsSync.existsSync('index.html')) {
-      res.sendFile(path.join(__dirname, 'index.html'));
-    } else {
-      // Créer une page d'index basique si elle n'existe pas
-      Logger.info("Création d'une page d'index basique...");
-      const basicIndexHTML = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OptimXmlPreview - Configuration requise</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 2rem; }
-    .message { max-width: 600px; margin: 0 auto; }
-  </style>
-</head>
-<body>
-  <div class="message">
-    <h1>OptimXmlPreview</h1>
-    <p>Veuillez d'abord convertir des emails XML pour accéder à l'interface.</p>
-    <p>Utilisez : <code>node src/convert/ConvertXmlToHtml.js -o ./Output -i ./Data</code></p>
-  </div>
-  <script src="assets/js/navigation-interface.js"></script>
-  <script src="assets/js/onboarding.js"></script>
-</body>
-</html>`;
-      await fs.writeFile('index.html', basicIndexHTML);
-      res.sendFile(path.join(__dirname, 'index.html'));
+    // Lire le template d'index existant
+    const templatePath = path.join(__dirname, 'index.html');
+    if (!fsSync.existsSync(templatePath)) {
+      return res.status(500).send('Fichier index.html manquant');
     }
+
+    let html = await fs.readFile(templatePath, 'utf8');
+
+    // Génération dynamique de la liste + comptage
+    const { emailHTML, total, recent } = await generateEmailListHTML();
+
+    // Remplacer le conteneur de liste d'emails
+    html = html.replace(
+      /<div class="email-list" id="emailList">[\s\S]*?<\/div>/m,
+      `<div class="email-list" id="emailList">${emailHTML}\n</div>`
+    );
+
+    // Mettre à jour le compteur dans l'en-tête
+    html = html.replace(
+      /<span class="email-count">.*?<\/span>/,
+      `<span class="email-count">${recent} nouveau(x) / ${total} email(s)</span>`
+    );
+
+    res.type('text/html').send(html);
   } catch (error) {
-    Logger.error(`Erreur lors du service de l'index: ${error.message}`);
+    Logger.error(`Erreur lors du rendu dynamique de l'index: ${error.message}`);
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
 });
