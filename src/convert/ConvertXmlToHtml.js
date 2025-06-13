@@ -44,6 +44,11 @@ const CONFIG = {
   PDF_OUTPUT_DIR: CONFIG_FILE.PDF_OUTPUT_DIR || './pdf',
 };
 
+// ---------------------------------------------------------------------------
+//  Configuration globale : désactiver la génération automatique de index.html
+// ---------------------------------------------------------------------------
+const GENERATE_INDEX = false;
+
 /**
  * Classe pour gérer l'affichage d'un loader animé dans la console
  */
@@ -628,11 +633,12 @@ async function processAllFiles(inputDir, outputDir) {
     if (xmlFiles.length === 0) {
       Logger.warning(`Aucun fichier XML trouvé dans ${inputDir}`);
       // Générer quand même l'interface pour afficher les fichiers existants
-      Logger.info("Génération de la page d'index avec menu de navigation...");
-      const indexGenerated = await generateIndexPage(outputDir, []);
-
-      if (indexGenerated) {
-        Logger.success("Page d'index générée avec succès - Interface de navigation disponible");
+      if (GENERATE_INDEX) {
+        Logger.info("Génération de la page d'index avec menu de navigation...");
+        const indexGenerated = await generateIndexPage(outputDir, []);
+        if (indexGenerated) {
+          Logger.success("Page d'index générée avec succès - Interface de navigation disponible");
+        }
       }
 
       return { success: true, generatedFiles: [] }; // Pas d'erreur, juste aucun fichier à traiter
@@ -693,11 +699,12 @@ async function processAllFiles(inputDir, outputDir) {
     );
 
     // Générer la page d'index avec menu de navigation (toujours)
-    Logger.info("Génération de la page d'index avec menu de navigation...");
-    const indexGenerated = await generateIndexPage(outputDir, generatedFiles);
-
-    if (indexGenerated) {
-      Logger.success("Page d'index générée avec succès - Interface de navigation disponible");
+    if (GENERATE_INDEX) {
+      Logger.info("Génération de la page d'index avec menu de navigation...");
+      const indexGenerated = await generateIndexPage(outputDir, generatedFiles);
+      if (indexGenerated) {
+        Logger.success("Page d'index générée avec succès - Interface de navigation disponible");
+      }
     }
 
     // Retourner le résultat et la liste des fichiers générés
