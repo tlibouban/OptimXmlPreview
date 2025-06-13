@@ -110,7 +110,7 @@ async function generateEmailListHTML() {
     const archivedItems = infos.filter((i) => !i.isRecent);
 
     if (recentItems.length > 0) {
-      emailHTML += `\n      <div class="email-section-header">\n        <h3><i class="fas fa-plus-circle"></i> Nouveaux emails (${recentItems.length})</h3>\n      </div>`;
+      emailHTML += `\n      <div class="email-section-header">\n        <h3><i class="fas fa-plus-circle"></i> Nouveaux emails (${recentItems.length})\n          <input type="checkbox" id="selectAll" class="select-all-checkbox" title="Tout sélectionner" style="margin-left:auto;transform:scale(1.2);cursor:pointer;" />\n        </h3>\n      </div>`;
       recentItems.forEach((info, idx) => {
         emailHTML += buildItem(info, idx);
       });
