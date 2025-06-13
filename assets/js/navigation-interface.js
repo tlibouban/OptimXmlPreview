@@ -501,6 +501,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ----------------------  Sélection multiple & Envoi ---------------------- */
   const checkboxes = document.querySelectorAll('.email-select');
+  const recentCheckboxes = document.querySelectorAll('.email-item.recent .email-select');
   const sendSelectedButton = document.getElementById('sendSelectedButton');
   const selectAllCheckbox = document.getElementById('selectAll');
 
@@ -508,7 +509,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const any = Array.from(checkboxes).some((cb) => cb.checked);
     if (sendSelectedButton) sendSelectedButton.disabled = !any;
     if (selectAllCheckbox) {
-      selectAllCheckbox.checked = Array.from(checkboxes).every((cb) => cb.checked);
+      // Met à jour l'état du "select all" uniquement en fonction des nouveaux emails
+      const allRecentChecked =
+        recentCheckboxes.length > 0 && Array.from(recentCheckboxes).every((cb) => cb.checked);
+      selectAllCheckbox.checked = allRecentChecked;
     }
   }
 
@@ -522,7 +526,8 @@ document.addEventListener('DOMContentLoaded', function () {
   if (selectAllCheckbox) {
     selectAllCheckbox.addEventListener('change', () => {
       const checked = selectAllCheckbox.checked;
-      checkboxes.forEach((cb) => (cb.checked = checked));
+      // Ne sélectionne / désélectionne que les emails récents
+      recentCheckboxes.forEach((cb) => (cb.checked = checked));
       updateSelected();
     });
   }
